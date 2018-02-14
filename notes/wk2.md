@@ -19,6 +19,8 @@ $Y$ is also organised with the examples in columns.
 
 ## Logistic Regression
 
+Logistic regression can be seen as a very small neural network.
+
 Given $x$ get $\hat y = P(y=1|x)$
 
 Paremeters: $w \in \mathbb R^{n_x}, b$
@@ -35,7 +37,25 @@ $\sigma(z) = \frac{1}{1 + e^-z}$
 
 Objective: find $w$ and $b$ such that $\hat y \approx y$, ie, $\hat y$ is a good estimate of the probabilty that $y = 1$
 
-### Cost function
+### Loss (Error) / Cost function
 
-To train $w$ and $b$, we first need to define the cost function.
+To train $w$ and $b$, we first need to define the loss function.
 
+Logistic Regression doesn't use the squared error as this can have more than one minimum.  Instead we use:
+
+$
+L(\hat y,y) = - \Big(y\log \hat y + (1 - y)\log (1 -\hat y)\Big) \\[6pt]
+$
+
+Terminology: The *loss* functions is applied to only a single example, whereas the *cost* function is the is applied to the parameters.
+
+Cost function:
+
+$$\begin{align*}
+J(w,b) &= \displaystyle \frac 1 m \sum_{i=1}^{m}{L(\hat y^{(i)},y^{(i)})}
+
+  \\
+    &= -\frac{1}{m} \left(y^{(i)}\log\hat y^{(i)} + (1-y^{(i)})\log(1-\hat y^{(i)})\right)
+\end{align*}$$
+
+## Gradient Descent
