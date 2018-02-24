@@ -46,18 +46,33 @@ To train $w$ and $b$, we first need to define the loss function.
 
 Logistic Regression doesn't use the squared error as this can have more than one minimum.  Instead we use:
 
-$
-L(\hat y,y) = - \Big(y\log \hat y + (1 - y)\log (1 -\hat y)\Big) \\[6pt]
-$
+$ P(y|x) = \hat y^y (1 -\hat y)^{1-y}$
+
+The $log_e$ function is monotonically increasing. Maximimising $ln P(y|x)$ will be the same as to maximising $P(y|x)$.
+
+$ln P(y|x) = y\ln \hat y + (1 - y)\ln (1 -\hat y)$ 
+
+We want to make probabilities large, but minimise loss, so we take the negative of the above:
+
+$ \mathcal L(\hat y,y) = - \Big(y\ln \hat y + (1 - y)\ln (1 -\hat y)\Big) $ 
 
 Terminology: The *loss* functions is applied to only a single example, whereas the *cost* function is the is applied to the parameters.
 
 Cost function:
 
 $$\begin{align*}
-J(w,b) &= \displaystyle \frac 1 m \sum_{i=1}^{m}{L(\hat y^{(i)},y^{(i)})} \\
+J(w,b) &= \displaystyle \frac 1 m \sum_{i=1}^{m}{\mathcal L(\hat y^{(i)},y^{(i)})} \\
     &= -\frac{1}{m} \sum_{i=1}^{m}\left(y^{(i)}\log\hat y^{(i)} + (1-y^{(i)})\log(1-\hat y^{(i)})\right)
 \end{align*}$$
+
+#### L1 and L2 loss functions
+
+These are probably used with linear regression, and come from the first `.ipynb`.
+
+ $$L_1(\hat{y}, y) = \sum_{i=0}^m\left|y^{(i)} - \hat{y}^{(i)}\right| \\[6pt]$$
+
+ $$L_2(\hat{y},y) = \sum_{i=0}^m(y^{(i)} - \hat{y}^{(i)})^2 $$
+
 
 ## Gradient Descent
 
@@ -75,6 +90,15 @@ $\delta$ is used to represent the partial derivitive (the term on the top depend
 
 Convention: `dw` is used to represent the derivitive term
 
+### Normalisation
+
+Gradient descent will work faster if the input data is normalised. 
+
+Each example is divided by its norm, giving each vector unit length. 
+(It seems that this is SRSS or Square Root of Sum of Squares.)
+
+    x_norm = np.linalg.norm(x, ord = 2, axis = 0, keepdims = True) 
+
 ## Derivitives
 
 * In python, instead of writing `dFinalOutputVariable_dVar` we just write `dvar`.
@@ -89,15 +113,15 @@ $$\frac{da}{dz} = a(1-a)$$
 [More friendly sigmoid derivation](http://ronny.rest/blog/post_2017_08_10_sigmoid/)
 
 Given the loss function (from above):
-$$ L(a,y) = - \Big(y\log a + (1 - y)\log (1 -a)\Big) $$
+$$ \mathcal L(a,y) = - \Big(y\log a + (1 - y)\log (1 -a)\Big) $$
 
 The derivative is:
 
-$$\frac{dL(a, y)}{da} = - \frac y a + \frac{1-y}{1-a}$$
+$$\frac{\delta \mathcal L(a, y)}{\delta a} = - \frac y a + \frac{1-y}{1-a}$$
 
 Multiplying these two with the chain rule, we get:
 
-$$ \frac{dL}{dz} = \frac{dL}{da} \cdot \ \frac{da}{dz} = a-y $$
+$$ \frac{d \mathcal L}{dz} = \frac{d \mathcal L}{da} \cdot \ \frac{da}{dz} = a-y $$
 
 
 ------
@@ -105,7 +129,7 @@ $$ \frac{dL}{dz} = \frac{dL}{da} \cdot \ \frac{da}{dz} = a-y $$
 Given the cost function (from above):
 
 $$\begin{align*}
-J(w,b) &= \displaystyle \frac 1 m \sum_{i=1}^{m}{L(\hat y^{(i)},y^{(i)})}
+J(w,b) &= \displaystyle \frac 1 m \sum_{i=1}^{m}{ \mathcal L(\hat y^{(i)},y^{(i)})}
 
   \\
     &= -\frac{1}{m} \sum_{i=1}^{m}\left(y^{(i)}\log a^{(i)} + (1-y^{(i)})\log(1-a^{(i)})\right)
@@ -120,11 +144,121 @@ $$ \frac{1}{m}\sum_{i=1}^m\left[h_\theta\left(x^{(i)}\right)-y^{(i)}\right]\,x_j
 
 ![logistic-regression-on-m-examples](wk2-logistic-regression-on-m-examples.png)
 
+* The derivatives are averaged over the $m$ training examples.
 * This slide implements a single step of gradient descent. It will need to be run multiple times until convergence.
 * The two `for` loops marked in green should be vectorised for efficiency (especially important with large training sets)
 
 
 ---------------
+
+## Python and Vectorisation
+
+Vectorisation is about removing explicit loops from code for efficency.
+
+`np.dot(x,y)` is equivalent to $x^T \cdot y$ - the transpose is not required.
+
+Using `np.dot` is about 300x faster than implementing with a `for` loop.
+
+Both GPUs and CPUs have SIMD instructions - Single Instruction Multiple Data which are utilised for parallelisation by the heavily optimised math libraries.
+
+### Removing loop over training examples
+
+Given array $X$ arranged as follows:
+
+$$ X = 
+  \begin{bmatrix}
+      | & | & & | \\
+      x^{(1)} & x^{(2)} & \ldots & x^{(n)} \\
+      | & | & & | 
+\end{bmatrix}$$
+
+Then $Z$ is a *row* vector of $z^{(i)}$ values calculated by:
+$$ Z = \vec w^TX + \vec b$$
+
+Where $\vec b \in \mathbb R^{1 \times m}$ and each element is equal to the scalar $b$.
+
+In python: `Z = np.dot(w.T, X) + b` (python will "broadcast" scalar `b` to each element)
+
+## Vectorising Logistic Regression Gradients
+
+Given:
+
+$ A = \left[a^{(1)}\ a^{(2)} \cdots \ a^{(m)}\right]$ and $ Y = \left[y^{(1)}\ y^{(2)} \cdots \ y^{(m)}\right]$
+
+Then the python `dZ` is simply:
+ $dZ = A - Y$
+
+| Formula | Python |
+|:--------|:-------|
+|$\displaystyle db = \frac 1 m \sum_{i=1}^m dZ_i$ | `db = 1/m * np.sum(dZ)` 
+|$\displaystyle dw = \frac 1 m X \cdot dZ^T$    | `dw = 1/m * np.dot(X, dZ.T)`
+<!-- |$\displaystyle \begin{align}dw &= \sum_{i=1}^m \sum_{j=1}^n x{}  \\ &= \frac 1 m X \cdot dZ^T \end{align}$    | `dw = 1/m * np.dot(X, dZ.T)` -->
+
+## Python broadasting
+
+`.sum(axis = 0)` will sum the columns.
+
+`.reshape` is $\mathcal O(1)$ so it is very cheap to call. Andrew sometimes puts in an explicit `reshape` as documentation. `reshape` will fail if trying to change the number of elements.
+
+## Python / numpy vectors
+
+A "rank 1 array" is neither a row vector nor a column vector. 
+It's transpose is identical to itself.
+
+Python will tranform it into whatever is expected for vector operations. 
+
+Eg:
+
+    >>> a = np.array([0, 1, 2, 3, 4])
+    >>> a.shape
+    (5,) # Note: trailing comma
+    >>> np.dot(a,a.T)
+    30  # Not an outer product giving an array as expected
+
+To reduce bugs, commit to either a column or row vector.
+
+To reshape an array to a column vector:
+    >>> a.reshape(-1, 1)
+    array([[0],
+          [1],
+          [2],
+          [3],
+          [4]])
+    >>> a.reshape(-1, 1).shape
+    (5, 1) # Note: no trailing comma
+
+It's probably better to reshape to explicit dimensions to document and reduce bugs.
+
+### Assertions
+
+Enforce the size of an matrix to be as expected:
+
+    assert(a.shape == (5,1))
+This also helps to document the code.
+
+### Softmax
+
+All rows sum to 1.
+
+$$ \begin{align} \displaystyle
+softmax(x) &= softmax\begin{bmatrix}
+    x_{11} & x_{12} & x_{13} & \dots  & x_{1n} \\
+    x_{21} & x_{22} & x_{23} & \dots  & x_{2n} \\
+    \vdots & \vdots & \vdots & \ddots & \vdots \\
+    x_{m1} & x_{m2} & x_{m3} & \dots  & x_{mn}
+\end{bmatrix} \\[12pt]
+&= \begin{bmatrix}
+    \frac{e^{x_{11}}}{\sum_{j}e^{x_{1j}}} & \frac{e^{x_{12}}}{\sum_{j}e^{x_{1j}}} & \frac{e^{x_{13}}}{\sum_{j}e^{x_{1j}}} & \dots  & \frac{e^{x_{1n}}}{\sum_{j}e^{x_{1j}}} \\
+    \frac{e^{x_{21}}}{\sum_{j}e^{x_{2j}}} & \frac{e^{x_{22}}}{\sum_{j}e^{x_{2j}}} & \frac{e^{x_{23}}}{\sum_{j}e^{x_{2j}}} & \dots  & \frac{e^{x_{2n}}}{\sum_{j}e^{x_{2j}}} \\
+    \vdots & \vdots & \vdots & \ddots & \vdots \\
+    \frac{e^{x_{m1}}}{\sum_{j}e^{x_{mj}}} & \frac{e^{x_{m2}}}{\sum_{j}e^{x_{mj}}} & \frac{e^{x_{m3}}}{\sum_{j}e^{x_{mj}}} & \dots  & \frac{e^{x_{mn}}}{\sum_{j}e^{x_{mj}}}
+\end{bmatrix} = \begin{pmatrix}
+    softmax\text{(first row of x)}  \\
+    softmax\text{(second row of x)} \\
+    ...  \\
+    softmax\text{(last row of x)} \\
+\end{pmatrix}
+\end{align} $$
 
 ## Other
 
@@ -133,5 +267,8 @@ $$ \frac{1}{m}\sum_{i=1}^m\left[h_\theta\left(x^{(i)}\right)-y^{(i)}\right]\,x_j
 [Swish function like ReLU but differentiable at all points](https://www.derivative-calculator.net/#expr=x%2A%281%2F%281%2Be%5E-x%29)
 
 ## TODO
+
+* Last vid on stats and product of probs
+* Algebra behind $A-Y$
 
 [Yes you should understand backprop - Andrej Karpathy](https://medium.com/@karpathy/yes-you-should-understand-backprop-e2f06eab496b)
