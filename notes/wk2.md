@@ -48,7 +48,9 @@ Logistic Regression doesn't use the squared error as this can have more than one
 
 $ P(y|x) = \hat y^y (1 -\hat y)^{1-y}$
 
-The $log_e$ function is monotonically increasing. Maximimising $ln P(y|x)$ will be the same as to maximising $P(y|x)$.
+Because $y$ can only take the value of $0$ or $1$.
+
+The $log_e$ function is monotonically increasing. Maximimising $ln P(y|x)$ will be the same as maximising $P(y|x)$.
 
 $ln P(y|x) = y\ln \hat y + (1 - y)\ln (1 -\hat y)$ 
 
@@ -65,6 +67,8 @@ J(w,b) &= \displaystyle \frac 1 m \sum_{i=1}^{m}{\mathcal L(\hat y^{(i)},y^{(i)}
     &= -\frac{1}{m} \sum_{i=1}^{m}\left(y^{(i)}\log\hat y^{(i)} + (1-y^{(i)})\log(1-\hat y^{(i)})\right)
 \end{align*}$$
 
+This uses maximum liklihood estimation. The $\frac 1 m$ term isn't averaging, it's actually scaling the cost the same order of magnitude as the individual costs.
+
 #### L1 and L2 loss functions
 
 These are probably used with linear regression, and come from the first `.ipynb`.
@@ -78,7 +82,7 @@ These are probably used with linear regression, and come from the first `.ipynb`
 
 We want to find values of $w$ and $b$ which minimise $J(w,b)$.
 
-One of the reasons we chose the cost function as we do is because it is guaranteed to be convex, so all negative gradients point at the minimum.
+One of the reasons we chose the cost function as we do is because it is [guaranteed to be convex](http://mathgotchas.blogspot.co.uk/2011/10/why-is-error-function-minimized-in.html), so all negative gradients point at the minimum.
 
 Until convergence (within a $\epsilon$ value), we repeatedly change each element $w_i$ to be:
 
@@ -94,10 +98,18 @@ Convention: `dw` is used to represent the derivitive term
 
 Gradient descent will work faster if the input data is normalised. 
 
-Each example is divided by its norm, giving each vector unit length. 
-(It seems that this is SRSS or Square Root of Sum of Squares.)
+Each example can be divided by its norm, giving each vector unit length. 
 
     x_norm = np.linalg.norm(x, ord = 2, axis = 0, keepdims = True) 
+
+Using [`linalg.norm`](https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.norm.html) `ord=2` will return the 2-norm of the vector, a.k.a. the Euclidean norm, which is the SRSS or Square Root of Sum of Squares.
+
+Alternatively:
+
+One common preprocessing step in machine learning is to center and standardize your dataset, meaning that you substract the mean of the whole numpy array from each example, and then divide each example by the standard deviation of the whole numpy array. This is called *Z-scoring*.
+
+But for picture datasets, it is simpler and more convenient and works almost as well to just divide every row of the dataset by 255 (the maximum value of a pixel channel).
+
 
 ## Derivitives
 
@@ -115,7 +127,7 @@ $$\frac{da}{dz} = a(1-a)$$
 Given the loss function (from above):
 $$ \mathcal L(a,y) = - \Big(y\log a + (1 - y)\log (1 -a)\Big) $$
 
-The derivative is:
+The [derivative](https://stats.stackexchange.com/questions/278771/how-is-the-cost-function-from-logistic-regression-derivated) is:
 
 $$\frac{\delta \mathcal L(a, y)}{\delta a} = - \frac y a + \frac{1-y}{1-a}$$
 
@@ -260,6 +272,14 @@ softmax(x) &= softmax\begin{bmatrix}
 \end{pmatrix}
 \end{align} $$
 
+## Learnings from assignment
+
+* If the learning rate is too large (0.01), the cost may oscillate up and down. It may even diverge (though in this example, using 0.01 still eventually ends up at a good value for the cost).
+* A lower cost doesn't mean a better model. You have to check if there is possibly overfitting. It happens when the training accuracy is a lot higher than the test accuracy.
+* In deep learning, we usually recommend that you:
+	* Choose the learning rate that better minimizes the cost function.
+	* If your model overfits, use other techniques to reduce overfitting. (We'll talk about this in later videos.)
+
 ## Other
 
 [Precision vs recall with venn diagrams](http://ronny.rest/blog/post_2018_01_26_precision_recall/)
@@ -269,6 +289,5 @@ softmax(x) &= softmax\begin{bmatrix}
 ## TODO
 
 * Last vid on stats and product of probs
-* Algebra behind $A-Y$
 
 [Yes you should understand backprop - Andrej Karpathy](https://medium.com/@karpathy/yes-you-should-understand-backprop-e2f06eab496b)
