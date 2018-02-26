@@ -41,4 +41,42 @@ Now the view is that a thought is a vector of neural activity, rather than a sym
 
 Some of AI is coming around to this viewpoint, but too slowly in Hinton's opinion.
 
-## 
+## Pieter Abbeel - ML, DL and Robotics
+Studied electrical engineering. Everything was interesting, he didn't know where to start. AI seemed to be at the core of everything and could assist any discipline so he picked that.
+
+Deep reinforcement learning: Started with reinforcement learning. Autonomous helo flight, folding laundry. Learning enabling what would not be possible otherwise. Domian expertise and ML expertise was required. Deep learning was able to represent the domain expertise.
+
+Was inspred by Alexnet's 2012 success to apply deep learning to reinforcement learning. 
+
+What's next: 
+* Where does the data come from?
+* Credit assignment - what actions done early on got the credit later on?
+* Safety problem - autonomously collected data would be very dangerous on public roads, yet negative examples are needed
+
+The deep part is the representation of the pattern, which has been largly addressed. How to tease apart the pattern is still a big challenge.
+
+How to get systems to reasons of long time horizons. Currently problems are where acting well over 5 seconds means that the entire problem is well addressed. This is very different from a day-long skill or living a life a s a robot.
+
+Also how to keep learning when you're already pretty good. Catching the one in a billion accident data is really important.
+
+Can we learn the reinforcement learning model itself (credit assignment, exploration)?  Have another learning program be the outer loop, tweaking parameters which make the learning of the actual task faster.
+
+Rather than starting from scratch, how can we reuse what's already learned for the next task?
+
+Pieter appreciated Andrew Ng's supervision which focussed his Ph.D on the real-world impact rather than on the math itself.
+
+Advice: don't just read stuff, but try it out yourself. Do some Kaggle.
+
+PhD or job in big company? Depends on the amount of mentoring you can get. The one or even two advisors have mentoring as their defined role, and often love guiding and shaping students. Companies may do this, but it is not the crux of the dynamic.
+
+DeepRL successes:
+* Playing Atari games based on pixels alone
+* Simulated robot inventing walking / running rewarded by linear distance and minimal ground impact
+
+Behavioural cloning: Supervised learning to mimic what a human is doing, then gradually layering on reinforcement learning to better meet metrics.
+
+RL is fascinating to watch the learning of what works, but is time consuming and not always safe.
+
+#### TODO:
+* Andrej Karpathy's deep learning course
+* Berkley's deep reinforcement learning course
