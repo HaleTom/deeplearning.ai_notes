@@ -77,6 +77,6 @@ Behavioural cloning: Supervised learning to mimic what a human is doing, then gr
 
 RL is fascinating to watch the learning of what works, but is time consuming and not always safe.
 
-#### TODO:
-* Andrej Karpathy's deep learning course
+#### TODO based on Pieter's recommendations:
+* Andrej Karpathy's deep learning course [Convolutional Neural Networks for Visual Recognition (CS231n)](http://cs231n.stanford.edu/)
 * Berkley's deep reinforcement learning course

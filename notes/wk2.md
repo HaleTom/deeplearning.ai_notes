@@ -67,7 +67,7 @@ J(w,b) &= \displaystyle \frac 1 m \sum_{i=1}^{m}{\mathcal L(\hat y^{(i)},y^{(i)}
     &= -\frac{1}{m} \sum_{i=1}^{m}\left(y^{(i)}\log\hat y^{(i)} + (1-y^{(i)})\log(1-\hat y^{(i)})\right)
 \end{align*}$$
 
-This uses maximum liklihood estimation. The $\frac 1 m$ term isn't averaging, it's actually scaling the cost the same order of magnitude as the individual costs.
+This uses maximum liklihood estimation, which multiplies all the probablities. The $ln$ version adds all the probabilities analagously. The $\frac 1 m$ term isn't averaging, it's actually scaling the cost the same order of magnitude as the individual costs.
 
 #### L1 and L2 loss functions
 
