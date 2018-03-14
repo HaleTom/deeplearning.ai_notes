@@ -127,3 +127,21 @@ $$g'(z) = \begin{cases}
 \end{cases} $$
 
 We fudge the undefined gradient case where $z=0$
+
+## NN gradient descent
+
+(It's ok to initialise weights to 0 for logistic regression)
+
+It's important not to initialise a neural network's weights to zeros, but rather initialise them randomly.  The biases can be all zero.
+
+If initial weights are equal, then all the activations and $dz$ vectors will be equal, all rows of $dw$ will be equal and all the neurons in the layer will update by the same amount, remaining symmetrical. All hidden units are then computing the same thing, and there's no point having more than one.
+
+Get a Gaussian/normal distribution with mean $0$ and variance $1$ ([for maximum sigmoid / tanh gradient](https://stackoverflow.com/questions/47240308/differences-between-numpy-random-rand-vs-numpy-random-randn-in-python)), and then scale it down (to avoid the smaller gradients at the tail ends):
+
+    w = np.random.randn(w.shape) * 0.01
+
+For a deep neural network, a different constant may be better (see next week), but it will still be a small number.
+
+The scaling only needs to be done for sigmoid and tanh. Using ReLU, half the gradients will be $0$ (the initial weights will be $\lt 0$.
+
+Note that `random.rand` (no final `n`) gives *uniform* values over interval $[0,1)$.
