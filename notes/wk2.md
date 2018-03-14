@@ -1,6 +1,6 @@
 # Week 2
 
-Logisitic regression is an algorithm for binary classifiction: detecting the presence vs absence of something.
+Logistic regression is an algorithm for binary classification: detecting the presence vs absence of something.
 
 For each red, green, blue matrix representing the image, concatenate all values to get a feature vector.
 
@@ -26,9 +26,9 @@ $\hat y$ is the predicted value of $y$ from the network.
 
 Given $x$ get $\hat y = P(y=1|x)$
 
-Paremeters: $w \in \mathbb R^{n_x}, b$
+Parameters: $w \in \mathbb R^{n_x}, b$
 
-For easier implementation, we keeep $w$ and $b$ separate. $b$ is the bias or intercept term. 
+For easier implementation, we keep $w$ and $b$ separate. $b$ is the bias or intercept term. 
 
 In the previous course, $w_0$ was equal to $b$ and $x_0$ was always 1 ($x \in \mathbb R^{n_x+1}$).
 
@@ -38,7 +38,7 @@ Instead, we use $\hat y = \sigma(z)$ to map the range to $(0,1)$.
 
 $\sigma(z) = \frac{1}{1 + e^-z}$
 
-Objective: find $w$ and $b$ such that $\hat y \approx y$, ie, $\hat y$ is a good estimate of the probabilty that $y = 1$
+Objective: find $w$ and $b$ such that $\hat y \approx y$, i.e., $\hat y$ is a good estimate of the probability that $y = 1$
 
 ### Loss (Error) / Cost function
 
@@ -50,7 +50,7 @@ $ P(y|x) = \hat y^y (1 -\hat y)^{1-y}$
 
 Because $y$ can only take the value of $0$ or $1$.
 
-The $log_e$ function is monotonically increasing. Maximimising $ln P(y|x)$ will be the same as maximising $P(y|x)$.
+The $log_e$ function is monotonically increasing. Maximising $ln P(y|x)$ will be the same as maximising $P(y|x)$.
 
 $ln P(y|x) = y\ln \hat y + (1 - y)\ln (1 -\hat y)$ 
 
@@ -67,7 +67,7 @@ J(w,b) &= \displaystyle \frac 1 m \sum_{i=1}^{m}{\mathcal L(\hat y^{(i)},y^{(i)}
     &= -\frac{1}{m} \sum_{i=1}^{m}\left(y^{(i)}\log\hat y^{(i)} + (1-y^{(i)})\log(1-\hat y^{(i)})\right)
 \end{align*}$$
 
-This uses maximum liklihood estimation, which multiplies all the probablities. The $ln$ version adds all the probabilities analagously. The $\frac 1 m$ term isn't averaging, it's actually scaling the cost the same order of magnitude as the individual costs.
+This uses maximum likelihood estimation, which multiplies all the probabilities. The $ln$ version adds all the probabilities analogously. The $\frac 1 m$ term isn't averaging, it's actually scaling the cost the same order of magnitude as the individual costs.
 
 #### L1 and L2 loss functions
 
@@ -111,7 +111,7 @@ One common preprocessing step in machine learning is to center and standardize y
 But for picture datasets, it is simpler and more convenient and works almost as well to just divide every row of the dataset by 255 (the maximum value of a pixel channel).
 
 
-## Derivitives
+## Derivatives
 
 * In python, instead of writing `dFinalOutputVariable_dVar` we just write `dvar`.
 * [Derivative Calculator](https://www.derivative-calculator.net/) provides worked examples and rules
@@ -151,6 +151,8 @@ J(w,b) &= \displaystyle \frac 1 m \sum_{i=1}^{m}{ \mathcal L(\hat y^{(i)},y^{(i)
 $$ \frac{1}{m}\sum_{i=1}^m\left[h_\theta\left(x^{(i)}\right)-y^{(i)}\right]\,x_j^{(i)} $$
 
 ![logistic regression derivatives](wk2-logistic-regression-derivatives.png)
+
+For supervised learning, we know $x$ so we don't try to get the derivitaves of $x$.
 
 ## Logistic regression with $m$ training examples
 
@@ -206,7 +208,7 @@ Then the python `dZ` is simply:
 |$\displaystyle dw = \frac 1 m X \cdot dZ^T$    | `dw = 1/m * np.dot(X, dZ.T)`
 <!-- |$\displaystyle \begin{align}dw &= \sum_{i=1}^m \sum_{j=1}^n x{}  \\ &= \frac 1 m X \cdot dZ^T \end{align}$    | `dw = 1/m * np.dot(X, dZ.T)` -->
 
-## Python broadasting
+## Python broadcasting
 
 `.sum(axis = 0)` will sum the columns.
 

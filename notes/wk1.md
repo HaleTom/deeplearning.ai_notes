@@ -6,7 +6,7 @@
 
 Courses:
 1. Deep Learning and Neural Networks
- 1. Intoduction (this week)
+ 1. Introduction (this week)
  1. Basics of NN programming (fwd & back prop)
  1. Single hidden layer network
  1. Deep NN
@@ -32,7 +32,7 @@ Almost all economic value has been created through supervised learning.
 * Images: CNN
 * Sequence data (temporal component): RNN
 
-Structured data: Each feature has a well-defined meaning. Eg, Databases
+Structured data: Each feature has a well-defined meaning. E.g., Databases
 Unstructured data: Images, audio, text
 
 Most economic value so far has been on structured data.
@@ -41,7 +41,7 @@ Most economic value so far has been on structured data.
 
 The amount of available data is ever increasing.
 
-Performance as available labeled data ($m$) increases:
+Performance as available labelled data ($m$) increases:
 * SVM / logistic regression - performance plateaus very quickly
 * Small NNs - performance flattens more slowly
 * Large NNs - performance takes a long time to plateau
@@ -59,7 +59,7 @@ Drivers for scale:
 * Computation
 * Algorithms (improvements in accuracy or speed)
 
-One algorithmic improvement was replacing the sigmoid activation function with ReLU as sigmoid has a very small gradient with inputs $< -4$ or $> 4$, and suffers from vanishing gradients. This makes gradent descent work much faster.
+One algorithmic improvement was replacing the sigmoid activation function with ReLU as sigmoid has a very small gradient with inputs $< -4$ or $> 4$, and suffers from vanishing gradients. This makes gradient descent work much faster.
 
 
 ##### Development Cycle
@@ -69,7 +69,7 @@ An iterative approach is required:
 * Code
 * Experiment
 
-Because this cycle needs to be repeated many times, it's important that the computation speed is high, or conversely, the time to run the expirment (train the network) is low.
+Because this cycle needs to be repeated many times, it's important that the computation speed is high, or conversely, the time to run the experiment (train the network) is low.
 
 #### Support
 
