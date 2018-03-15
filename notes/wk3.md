@@ -18,7 +18,7 @@ $a_i^{[l]}$ refers to the activation of the $i$-th unit in layer $l$.
 
 ## Computing a Neural Network's output for a single input
 
-With a single logistic unit, $z = w^Tx + b$, the weights being organised as a row vector, multipled by $x$, a column vector. 
+With a single logistic unit, $z = w^Tx + b$, the weights being organised as a row vector, multiplied by $x$, a column vector. 
 
 With multiple units in a layer, the weights for each unit are still organised as rows of $W$, one for each unit.
 
@@ -40,7 +40,7 @@ $W$ has each unit's weights arranged in rows, and this is multiplied by $A^{[l-1
 
 $Z^{[l]} = W^{[l]}A^{[l-1]} + b^{[l]}$
 
-This still has the same layout as  $z = w^Tx + b$, the weights being organised as a row vector, multipled by $x$, a column vector.
+This still has the same layout as  $z = w^Tx + b$, the weights being organised as a row vector, multiplied by $x$, a column vector.
 
 If interested in dimensions and crazy notation: $W^{[l]} \in \mathbb R^{a_h^{[l]} \times a_h^{[l-1]}}$ and $A^{[l-1]} \in \mathbb R^{a_h^{[l-1]} \times m}$ and $WA \in \mathbb R^{ a_h^{[l]} \times m}$ 
 
@@ -50,18 +50,23 @@ $W$ also is arranged like the network topology, with the weights defining each n
 
 ![wk3-vectorisation.png](wk3-vectorisation.png)
 
+## NN Vectorised Gradient Descent
+
+![wk3-vectorised-grad-descent.png](wk3-vectorised-grad-descent.png)
+
 ## Activation Functions
 
 Tanh almost always works better than sigmoid as an activation function. The only exception would be the output layer with binary classification where a range of $[0, 1]$ is preferable.
 
 $$tanh = \frac {e^z - e^{-z}} {e^z + e^{-z}}$$
 
-This is a mathematically shifted version of sigmoid, passing through the origin and with range $[-1, 1]$. The activations will centre around $0$ rather thans sigmoid's $0.5$, making learning for the next layer a bit easier. Tanh has maximum gradient $1$ compared to sigmoid's $0.25$.
+This is a mathematically shifted version of sigmoid, passing through the origin and with range $[-1, 1]$. The activations will centre around $0$ rather than sigmoid's $0.5$, making learning for the next layer a bit easier. Tanh has maximum gradient $1$ compared to sigmoid's $0.25$.
 
 $g(Z)$ denotes the activation function applied to $Z$. If there are different activation functions, $g^{[l]}(Z)$ denotes the activation function for the $l$-th layer.
 
-The disadvaantage of both sigmoid and tanh is that if the input values are very large or very small, then then gradient is very close to $0$, which can slow down gradient descent.
+The disadvantage of both sigmoid and tanh is that if the input values are very large or very small, then then gradient is very close to $0$, which can slow down gradient descent.
 
+#### ReLU
 The Rectified Linear Unit or ReLU doesn't suffer from the vanishing gradient problem, and is also fast to calculate.
 
 ReLU = $max(0,z)$
@@ -72,7 +77,7 @@ One disadvantage of ReLU is that the gradient $=0$ if the input is negative. In 
 
 Andrew recommends if there is a need to pick between the functions, to use plain ReLU.
 
-Leaky ReLU has a slight negative gradient if $z<0$.
+Leaky ReLU has a slight negative gradient if $z<0$, solving the [dead ReLU units problem](https://datascience.stackexchange.com/q/5706/47791).
 
 Andrew says that most people are using ReLU over tanh these days.
 
@@ -83,6 +88,11 @@ From [this answer](https://stats.stackexchange.com/a/176905/162527):
 > One may hypothesize that the hard saturation at 0 may hurt optimization by blocking gradient back-propagation.  To evaluate the potential impact of this effect we also investigate the softplus activation: $ \text{softplus}(x) = \log(1 + e^x) $ (Dugas et al., 2001), a smooth version of the rectifying non-linearity.  We lose the exact sparsity, but may hope to gain easier training.  However, experimental results tend to contradict that hypothesis, suggesting that hard zeros can actually help supervised training.  We hypothesize that the hard non-linearities do not hurt so long as the gradient can propagate along some paths, i.e., that some of the hidden units in each layer are non-zero With the credit and blame assigned to these ON units rather than distributed more evenly, we hypothesize that optimization is easier.  
 
 See also [Comprehensive list of activation functions in neural networks with pros/cons](https://stats.stackexchange.com/questions/115258/comprehensive-list-of-activation-functions-in-neural-networks-with-pros-cons/229015#229015)
+
+#### ELU
+
+ELU = [Exponential Linear Unit](https://arxiv.org/abs/1511.07289). The graph is rounded where ReLU has a sharp corner.
+
 
 ## Why is a non-linear activation function needed?
 
@@ -128,13 +138,29 @@ $$g'(z) = \begin{cases}
 
 We fudge the undefined gradient case where $z=0$
 
-## NN gradient descent
+#### ELU
+
+$$ELU = g(z) = \begin{cases}
+  x & \text{if } z \gt 0 \\
+  \alpha \cdot \left(e^z -1\right) & \text{otherwise}
+\end{cases} $$
+
+$$g'(z) = \begin{cases}
+  1 & z \gt 0 \\
+  g(z) + \alpha & \text{otherwise}
+\end{cases} $$
+
+ELU is not continuously differentiable if $x \ne 0$. The [CELU](https://arxiv.org/abs/1704.07483) solves this.
+
+## NN weight initialisation
 
 (It's ok to initialise weights to 0 for logistic regression)
 
 It's important not to initialise a neural network's weights to zeros, but rather initialise them randomly.  The biases can be all zero.
 
 If initial weights are equal, then all the activations and $dz$ vectors will be equal, all rows of $dw$ will be equal and all the neurons in the layer will update by the same amount, remaining symmetrical. All hidden units are then computing the same thing, and there's no point having more than one.
+
+![wk3-init-weights-0.png](wk3-init-weights-0.png)
 
 Get a Gaussian/normal distribution with mean $0$ and variance $1$ ([for maximum sigmoid / tanh gradient](https://stackoverflow.com/questions/47240308/differences-between-numpy-random-rand-vs-numpy-random-randn-in-python)), and then scale it down (to avoid the smaller gradients at the tail ends):
 
