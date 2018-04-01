@@ -8,9 +8,9 @@ This week is concerned with a single hidden layer, and of course input and outpu
 
 Superscript $[l]$ refers to the $l$-th layer.  Round bracket superscripts still refer to training examples, and come after square brackets if both are used.
 
-$n_h^{[l]}$ is the number of hidden units in the $l$-th layer. Numbering starts at 1 for the left-most hidden layer.
+$L$ is the number of layers in the network (excluding the input layer).  A 2-layer neural network has an input, hidden and output layer.
 
-$L$ is the number of layers in the network.  The input layer is not counted.  A 2-layer neural network has an input, hidden and output layer.
+$n^{[l]}$ is the number of hidden units in the $l$-th layer. Numbering starts at 0 for the input layer. $n^{L}$ is the number of units in the output layer.
 
 $a^{[l]}$ is the activation of the $l$-th layer. $a^{[0]}$ is the input "activation" and equivalent to $X$.
 
