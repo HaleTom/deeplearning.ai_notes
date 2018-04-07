@@ -136,9 +136,3 @@ for (i in range(1, len(layer_dims))):
   parameter[‘W’ + str(i)] = np.random.randn(layers[i], layers[i-1])) * 0.01
   parameter[‘b’ + str(i)] = np.random.randn(layers[i], 1) * 0.01
 ```
-
-
-# TODO
-Wk3: 
-* finish vectorised backprop lecture
-https://www.coursera.org/learn/neural-networks-deep-learning/lecture/WSia1/ian-goodfellow-interview

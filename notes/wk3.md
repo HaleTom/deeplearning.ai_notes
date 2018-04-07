@@ -171,3 +171,41 @@ For a deep neural network, a different constant may be better (see next week), b
 The scaling only needs to be done for sigmoid and tanh. Using ReLU, half the gradients will be $0$ (the initial weights will be $\lt 0$.
 
 Note that `random.rand` (no final `n`) gives *uniform* values over interval $[0,1)$.
+
+# Heroes of Deep Learning - Ian Goodfellow
+
+A very visible deep learning researcher.
+
+Was working on neuroscience. Took Andrew Ng's class.
+
+Built one of the first GPU CUDA setup to run Boltzmann machines at Stanford.
+
+SVMs didn't seem right - adding more data makes the slower.
+
+Invented GANs which produce more examples which look like the training data.
+
+Thought that he was near-death at one stage. Doctors feared a brain hemmorage. While waiting for MRIs, most of his thoughts were hoping others would try out the research ideas he had at the time.
+
+GANs are used to generate training data for other models and simulating scientific experiments.
+
+It can be more of an art than a science to get good results out of GANs. 
+
+Before Deep Learning was deep belief networks with Botzmann machines as the building blocks. Then came improvements such as ReLU and [batch normalisation](https://medium.com/deeper-learning/glossary-of-deep-learning-batch-normalisation-8266dcd2fa82). GANs need to become as stable as DNNs for wider uptake.
+
+Ian spends 40% of his time stabalising GANs.
+
+In his [Deep Learning](http://www.deeplearningbook.org/) textbook, he focusses on the math requried - linear algebra and probability were mentioned in particular.
+
+Paths:
+* Make reinforcemnet learning work as well as supervised learning
+* Make unsupervised learning work as well as supervised learning
+* Remove bias
+* Work on social issues - eg loss of jobs
+
+Advice for newcomers:
+
+* It's no longer a requirement to get a PhD. Write good code and put it on GitHub.  
+* It's far easier to write code useful code than something polished enough for Arxiv.
+* Work on projects as you're learning to apply it to an area of interest.
+
+Adversarial examples are the beginning of a field Ian calls machine learning security - fooling machine learning algorithms.
