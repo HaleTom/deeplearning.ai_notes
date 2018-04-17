@@ -234,7 +234,8 @@ Backward pass:
 
 During forward propagation, you had divided `A1` by `keep_prob`. In backpropagation, you'll therefore have to divide `dA1` by `keep_prob` again (the calculus interpretation is that if $A^{[1]}$ is scaled by `keep_prob`, then its derivative $dA^{[1]}$ is also scaled by the same `keep_prob`).
 
-
+    dA1 *= D1             # Step 1: Apply mask D1 to shut down the same neurons as during the forward propagation
+    dA1 /= keep_prob      # Step 2: Scale the value of neurons that haven't been shut down
 
 Dropout was first applied to computer vision. Generally it's hard to get enough data to reduce overfitting, so dropout is more commonly used, even by default.
 
@@ -339,13 +340,13 @@ The two sided difference takes twice as long to calculate, but it's much more ac
 
 The formal defniniton of a derivative is:
 
-$$f'(x) = \lim_{\epsilon \to 0} \frac{ f(x+\epsilon) - f(x-\epsilon) } {2\epsilon}$$
+$$\frac{\partial J}{\partial \theta} = \lim_{\varepsilon \to 0} \frac{J(\theta + \varepsilon) - J(\theta - \varepsilon)}{2 \varepsilon} $$
 
 The error of this approximation is $\mathcal O(\epsilon^2) $.
 
 If using the one-sided difference:
 
-$$J'(\Theta) \approx \dfrac{J(\Theta + \epsilon) - J(\Theta)}{\epsilon}$$
+$$\frac{\partial J}{\partial \theta} = \lim_{\varepsilon \to 0} \dfrac{J(\Theta + \epsilon) - J(\Theta)}{\epsilon}$$
 
 The error of this approximation is $\mathcal O(\epsilon) $ (which is larger than the previous since $ 0 \lt \epsilon \lt 1$).
 
@@ -355,7 +356,7 @@ The error of this approximation is $\mathcal O(\epsilon) $ (which is larger than
 2. Reshape all $dW$s and $db$s and reshape them into a single vector $d\Theta$:
 3. For each element $i$ of $\Theta$:
    $\dfrac{\partial}{\partial\Theta_i}J(\Theta) \approx \dfrac{J(\Theta_1, \dots, \Theta_i + \epsilon, \dots, \Theta_n) - J(\Theta_1, \dots, \Theta_i - \epsilon, \dots, \Theta_n)}{2\epsilon}$
-4. Check the L2 norm (euclidian distance) ratio: $\displaystyle \frac{\left\Vert d\Theta_{approx} - d\Theta \right\Vert_2} {\left\Vert d\Theta_{approx} \right\Vert_2 + \left\Vert d\Theta \right\Vert_2}$: 
+4. Check the difference via L2 norm (euclidian distance) ratio: $\displaystyle \frac{\left\Vert d\Theta_{approx} - d\Theta \right\Vert_2} {\left\Vert d\Theta_{approx} \right\Vert_2 + \left\Vert d\Theta \right\Vert_2}$
 
 5. Use $\epsilon = 10^{-7}$ and check that the ratio is also $< 10^{-7}$. If the ratio is $> 10^{-3}$ then worry. Even at $>10^{-5}$ check for a bug, starting where an element of one is very different from an element of another.
     
