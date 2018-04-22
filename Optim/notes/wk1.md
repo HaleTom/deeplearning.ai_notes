@@ -366,9 +366,3 @@ The error of this approximation is $\mathcal O(\epsilon) $ (which is larger than
 * Remember to include the regularisation term in the gradient too
 * Doesn't work with dropout (set `keep_prob = 1`)
 * Can pass immediately after initialisation when the parameters are close to 0. Perhaps run again after training if the ratio looks marginal.
- 
-
-
-
-1c 2a 3d 4b 5b 6a 7a 8bc 9abdf 0c
-
