@@ -66,7 +66,7 @@ Exponentially weighted averages are also known as exponentially weighted moving 
 
 (Note: these curves assume that the displayed data is not at the beginning of the series as they would otherwise start almost at $0$ - see bias correction for why)
 
-When using a higher $\beta$, the curve is shifted to the right (higher latency) as more previous values are included, and it adapts more slowly with recent changes.
+When using a higher $\beta_1$ ($\beta_2$ is the term used in RMSprop (see later)), the curve is shifted to the right (higher latency) as more previous values are included, and it adapts more slowly with recent changes.
 
 $$\begin{align}
 v_t &=  0.1\theta_t + 0.9v_{t-1}\ \ \mathrm{or}\\
@@ -155,7 +155,8 @@ Substituting $a = 1$, and $r = \beta$, we get:
 
 $\displaystyle  \frac{(1-\beta) (1 - \beta^t )} {(1-\beta)}  =   (1 - \beta^t) $
 
-So in order for the whole series of coefficients to sum to $1$, we simply re-scale this by dividing by $(1-\beta^t)$, which is the bias correction we need. Note carefully that this division is done to $v_t$ AFTER you have summed that series, which is still the same old iteration formula, 
+So in order for the whole series of coefficients to sum to $1$, we simply re-scale this by dividing by $(1-\beta^t)$, (which is less than $1$) and the bias correction we need.
+Note carefully that this division is done to $v_t$ AFTER you have summed that series, which is still the same old iteration formula, 
 
 $ \begin{align*}
 v_t &= \frac { v_{t\text{ (no bias correction)}} } { (1-\beta^t) } \\[6pt]
@@ -163,3 +164,96 @@ v_{t\text{ (no bias correction)}} &= \beta v_{t-1} + (1-\beta) \theta_t \\[6pt]
 v_t &= \dfrac { (1-\beta) (\theta_t + \beta \theta_{t-1} + \beta^2 \theta_{t-2} + … + \beta^{t-1} \theta_1) } { (1-\beta^t) }\\[6pt] 
 \end{align*}$
 
+## Gradient descent with momentum
+
+Using momentum almost always works faster than gradient descent without momentum.
+
+Instead of the usual weight update with the current gradient, the EWMA of the gradient used to update the weights.
+
+Think of a ball rolling down a hill. Then $dW$ and $db$ are the the accelerations provided by one gradient descent iteration. $vdW$ and $vdb$ are the velocity the ball already has.
+
+The term $\beta$ (a bit less than $1$) acts as friction, preventing speeding up without limit.
+
+$\beta = 0.9$ is the recommended robust and commonly used value. With this value, after about 10 iterations the EWMA will have warmed up (purple line above moved to the green), so not many people bother implementing bias correction.
+
+    vdW = zeros(shape(dW)) # same shape as dW and W
+    vdb = zeros(shape(db)) # same shape as db and b
+
+In the literature, sometimes instead of:
+
+$ \begin{alignat*}{1}
+v_{dW} &:= \beta_1 \cdot v_{dW} &&+ (1-\beta_1) \cdot dW\\
+v_{db} &:= \beta_1 \cdot v_{db} &&+ (1-\beta_1) \cdot db
+\end{alignat*}$
+
+You may see:
+
+$ \begin{alignat*}{1}
+v_{dW} &:= \beta_1 \cdot v_{dW} &&+ dW\\
+v_{db} &:= \beta_1 \cdot v_{db} &&+ db
+\end{alignat*}$
+
+In this case, $v_{dW}$ ends up being scaled down by $\dfrac 1 {1 - \beta}$ and $\alpha$ needs to also be divided by $(1-\beta)$. Both work fine but this version affects the value of $\alpha$. It's less intuitive though: if the value of hyperparameter $\beta$ is tuned, then this will affect the value of $v_{dW}$ and also may also require $\alpha$ to be re-tuned.
+
+## RMSprop
+
+"Root Mean Squared prop". The term $\beta_2$ is used to distinguish from the other term, $\beta_1$, which is used in gradient descent with momentum.
+
+On each iteration of gradient descent:
+
+Calculate the squared EWMAs:
+
+$ \begin{alignat*}{8}
+S_{dW} &:= \beta_2 \cdot S_{dW} & &+ (1-\beta_2) \cdot dW^{\odot 2} \hspace{20pt} \\[6pt]
+S_{db} &:= \beta_2 \cdot S_{db} & &+ (1-\beta_2) \cdot db^{\odot 2} \hspace{20pt} \\
+\end{alignat*}$
+
+Note: $A^{\odot 2}$ raises $A$ to the 2nd [Hadamard Power](https://math.stackexchange.com/q/2749723/389109), a.k.a. `dW ** 2`.
+
+Update the weights, scaling down with the square root:
+
+$\begin{alignat}{1}
+W &:= W - \alpha \frac {dW} {\sqrt{S_{dW}} + \varepsilon} \\[6pt]
+b &:= b - \alpha \frac {db} {\sqrt{S_{db}} + \varepsilon} 
+\end{alignat} $
+
+To prevent division by $\approx 0$, $\varepsilon \approx 10^{-8}$ is added to the denominator.
+
+The square root of a squared number ensures a positive number, so that the update direction is still determined by the sign of the derivitive. Where the derivitive is larger, the divisor is also larger, making the updates smaller, damping the oscillating down a canyon effect.  This allows a larger learning rate, ($\alpha$) without diverging.
+
+## [Adam](https://arxiv.org/abs/1412.6980) optimisation agorithm
+
+Adam = Adaptive Moment estimation
+
+Not all optimiation algorithms work well across a wide range of deep learning architectures. Adam is one that does - it takes momentum and RMSprop and puts them together.
+
+$ \begin{alignat}{1} \
+v_{dW}, S_{dW} &:= 0 \\
+v_{db}, S_{db} &:= 0 \\
+\end{alignat}$
+
+$
+\text{for each iteration t using the current mini-batch}\ \{ \\
+\quad \text{Calculate } dW \text{and } db \text{ from the batch} \\
+\begin{alignat*}{99} \
+\quad v_{dW} &:= \beta_1 \cdot v_{dW} + (1-\beta_1) \cdot dW,\           \quad && v_{db} := \beta_1 \cdot v_{db} &&+ (1-\beta_1) \cdot db \quad && \text{# momentum EWMA} \\[6pt]
+\quad S_{dW} &:= \beta_2 \cdot S_{dW} + (1-\beta_2) \cdot dW^{\odot 2},\ \quad && S_{db} := \beta_2 \cdot S_{db} &&+ (1-\beta_2) \cdot db^{\odot 2} \quad && \text{# RMSprop} \\[6pt]
+\quad v_{dW} &:= \frac { v_{dW} } { (1-\beta_1^t) },\  \quad v_{db} := \frac { v_{db} } { (1-\beta_1^t) } \quad && && &&\text{# EMWA bias correction}\\[6pt]
+\quad v_{dW} &:= \frac { S_{dW} } { (1-\beta_2^t) },\  \quad S_{db} := \frac { S_{db} } { (1-\beta_2^t) } \quad && && &&\text{# RMSprop bias correction}\\[6pt]
+\quad W &:= W - \alpha \frac {dW} {\sqrt{S_{dW}} + \varepsilon},\  \quad b := b - \alpha \frac {db} {\sqrt{S_{db}} + \varepsilon} && && &&\text{# update weights}
+\end{alignat*}$
+\}
+
+Hyperparameter choices:
+
+* $\alpha$ - Needs to be tuned
+* $\beta_1 = 0.9$ (weighted average momentum-like term - a good default value) ($dW$)
+* $\beta_2 = 0.999$ ($dW^{\odot2}$)
+* $\varepsilon = 10^{-8}$ ($dW^{\odot2}$)
+
+Sometimes $\beta_1$ and $\beta_2$ are tuned, but people generally use the default values as given above.  Andrew knows of nobody turning $\varepsilon$.
+
+$\beta_1$ is called the first moment and $\beta2$ is called the 2nd moment. 
+
+Links:
+* [Overview of gradient descent algorithms](http://ruder.io/optimizing-gradient-descent/)
