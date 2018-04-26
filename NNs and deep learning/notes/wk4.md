@@ -108,7 +108,9 @@ The hyperparameters determine the final values of each layer's $W$ and $b$ that 
 
 Later on we will encounter:
 
- * Momentum term
+ * Momentum term ($\beta_1$)
+ * RMSprop term ($\beta_2$)
+ * Learning rate decay
  * Mini-batch size
  * Regularisation parameters
 
