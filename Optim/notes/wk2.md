@@ -1,5 +1,8 @@
 # [Optimisation Algorithms](https://www.coursera.org/learn/deep-neural-network/lecture/qcogH/mini-batch-gradient-descent)
 
+Links:
+* [Overview of gradient descent algorithms](http://ruder.io/optimizing-gradient-descent/)
+
 ## Mini-batch gradient descent
 
 Applying maching learning is highly empirical / iterative process, so it helps to train models quickly.
@@ -44,10 +47,13 @@ On *mini-batch* gradient descent, the cost will oscillate but the overall trend 
   * Any speed up from vectorisation is lost
 
 * Mini-batch_size $= just\_right$
+  * Will outperform both stochastic and batch gradient descent with a large dataset
   * The benefits of vectorisation are retained
   * Allows multiple steps per training set pass (epoch)
   * Most steps will be downhill
   * Will oscillate in a very small region rather than converge (see learning rate decay, later on)
+
+![Stochastic vs Mini-batch gradient descent](wk2-stochastic_and_minibatch.png)
 
 ### Choosing mini-batch size
 Guidelines for choosing mini-batch size:
@@ -58,7 +64,21 @@ Guidelines for choosing mini-batch size:
 
 Try a few different values for the batch size to find out which makes the training fastest.
 
-## Exponentially weighted averages
+### Implementation
+**Shuffle**: Create a shuffled version of the training set (X, Y) as shown below. Each column of X and Y represents a training example. Note that the random shuffling is done synchronously between X and Y. Such that after the shuffling the $i^{th}$ column of X is the example corresponding to the $i^{th}$ label in Y. The shuffling step ensures that examples will be split randomly into different mini-batches. 
+
+![wk2-minibatch_shuffle.png](wk2-minibatch_shuffle.png)
+
+- **Partition**: Partition the shuffled (X, Y) into mini-batches of size `mini_batch_size` (here 64). Note that the number of training examples is not always divisible by `mini_batch_size`. The last mini batch might be smaller, but you don't need to worry about this. When the final mini-batch is smaller than the full `mini_batch_size`, it will look like this: 
+
+![wk2-minibatch_partition.png](wk2-minibatch_partition.png)
+
+## Momentum
+Momentum is based upon EWMAs.
+
+![wk2-momentum.png](wk2-momentum.png)
+
+## Exponentially Weighted Moving Averages
 
 Exponentially weighted averages are also known as exponentially weighted moving averages in statistics.
 
@@ -110,7 +130,22 @@ $ \begin{align*}
 &\}
 \end{align*} $
 
-Andrew says that a better estimate would likely come from keeping the last $k$ values, summing them and then dividing by $k$. But that would be computationally more expensive and also require more memory. I don't understand how this would give exponential discounting though.
+or: 
+
+$ \begin{alignat}{0}\
+dW & \begin{cases}
+v_{dW^{[l]}} &:= \beta v_{dW^{[l]}} + (1 - \beta) dW^{[l]} \\
+W^{[l]} &:= W^{[l]} - \alpha v_{dW^{[l]}}
+\end{cases}
+\\[6pt]
+db & \begin{cases}
+v_{db^{[l]}} &:= \beta v_{db^{[l]}} + (1 - \beta) db^{[l]} \\
+b^{[l]} &:= b^{[l]} - \alpha v_{db^{[l]}} 
+\end{cases} \
+\end{alignat} $
+
+Andrew says that a better estimate would likely come from keeping the last $k$ values, summing them and then dividing by $k$. He says that would be computationally more expensive and also require more memory. I don't understand how this would give exponential discounting though.
+
 
 ## Bias correction in exponentially weighted averages
 
@@ -255,5 +290,40 @@ Sometimes $\beta_1$ and $\beta_2$ are tuned, but people generally use the defaul
 
 $\beta_1$ is called the first moment and $\beta2$ is called the 2nd moment. 
 
-Links:
-* [Overview of gradient descent algorithms](http://ruder.io/optimizing-gradient-descent/)
+## Learning rate decay
+
+Mini-batches don't converge on the minimum point, but instead wander around it. Decreasing the learning rate will have the wandering be in a tighter area, closer to the actual minimum.
+
+![Mini-batch convergence with/wo learning rate decay](wk2-learning-rate-decay.png)
+Above: Blue - no decay, Green - learning rate decay
+
+Learning rate decay formula:
+
+$\alpha := \dfrac 1 {1 + \text{decay_rate} * \text{epoch_num}} \cdot \alpha_0$
+
+with the above, $\alpha$  will decrease hyperbolically. 
+
+Or exponential decay:
+
+$\alpha := r^{\text{epoch_num}} \cdot \alpha_0$
+
+Where learning rate decay $ 0 < r \le 1$.
+
+Other options:
+
+$\alpha := \dfrac k {\sqrt{\text{epoch_num}}}\cdot \alpha_0 \quad $ or  $\quad \alpha := \dfrac k {\sqrt{\text{t}}}\cdot \alpha_0$
+
+Where $t$ is the mini-batch number.
+
+There's also discrete staircase where $\alpha$ is halved every $k$ iterations:
+
+![wk2-discrete-staircase.png](wk2-discrete-staircase.png)
+
+Note that the decay rate is yet another hyperparameter.
+
+$\alpha$ can also be manually reduced when training takes a long time, and there is a small number of models to train.
+
+
+
+
+[Credit for some images](http://x-wei.github.io/Ng_DLMooc_c2wk2.html)
