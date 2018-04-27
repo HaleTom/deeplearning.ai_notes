@@ -98,7 +98,7 @@ Expanding this out we get:
 
 $$ v_{t}=(1-\beta) \left(\theta_{t}+\beta \theta_{t-1}+\beta^{2}\theta_{t-2}+\cdots + \beta^{t-1}\theta_{1}\right)$$
 
-Note the most recent term gets the largest weight, namely $1 - \beta$. The weights of previous terms decay by $\beta$ each time.
+Note the most recent term gets the largest weight, namely $1 - \beta$. The weights of previous terms decay by $\beta$ each time. $\beta = 0$ disables momentum entirely.
 
 If there are sufficient previous terms, all of the weights add up to very close to $1$. See also *bias correction* (below).
 
@@ -111,6 +111,8 @@ So, $v_t$ averages over the last (approx) $\dfrac1 {1 - \beta}$ values.
 ### Implementation
 
 In most implementations, people don't often bother to implement bias correction, prefering to wait out the initial period. But if the EWMA is important in the early phase, then using bias correction will give a better estimation.
+
+Common values for $\beta$ range from 0.8 to 0.999.  If you don't feel inclined to tune this, $\beta = 0.9$ is often a reasonable default.
 
 $v_\Theta$ denotes the exponentially weighted moving average of $\Theta$.
 
@@ -269,15 +271,27 @@ v_{db}, S_{db} &:= 0 \\
 
 $
 \text{for each iteration t using the current mini-batch}\ \{ \\
-\quad \text{Calculate } dW \text{and } db \text{ from the batch} \\
+\quad \text{Calculate each layer's } dW \text{and } db \text{ from the batch} \\
 \begin{alignat*}{99} \
 \quad v_{dW} &:= \beta_1 \cdot v_{dW} + (1-\beta_1) \cdot dW,\           \quad && v_{db} := \beta_1 \cdot v_{db} &&+ (1-\beta_1) \cdot db \quad && \text{# momentum EWMA} \\[6pt]
 \quad S_{dW} &:= \beta_2 \cdot S_{dW} + (1-\beta_2) \cdot dW^{\odot 2},\ \quad && S_{db} := \beta_2 \cdot S_{db} &&+ (1-\beta_2) \cdot db^{\odot 2} \quad && \text{# RMSprop} \\[6pt]
-\quad v_{dW} &:= \frac { v_{dW} } { (1-\beta_1^t) },\  \quad v_{db} := \frac { v_{db} } { (1-\beta_1^t) } \quad && && &&\text{# EMWA bias correction}\\[6pt]
-\quad v_{dW} &:= \frac { S_{dW} } { (1-\beta_2^t) },\  \quad S_{db} := \frac { S_{db} } { (1-\beta_2^t) } \quad && && &&\text{# RMSprop bias correction}\\[6pt]
-\quad W &:= W - \alpha \frac {dW} {\sqrt{S_{dW}} + \varepsilon},\  \quad b := b - \alpha \frac {db} {\sqrt{S_{db}} + \varepsilon} && && &&\text{# update weights}
-\end{alignat*}$
-\}
+\quad v_{dW}^{corrected} &:= \frac { v_{dW} } { 1-(\beta_1)^t },\  \quad v_{db}^{corrected} := \frac { v_{db} } { 1-(\beta_1)^t } \quad && && &&\text{# EMWA bias correction}\\[6pt]
+\quad S_{dW}^{corrected} &:= \frac { S_{dW} } { 1-(\beta_2)^t },\  \quad S_{db}^{corrected} := \frac { S_{db} } { 1-(\beta_2)^t } \quad && && &&\text{# RMSprop bias correction}\\[6pt]
+\quad W &:= W - \alpha \frac {v_{dW}^{corrected}} {\sqrt{S_{dW}^{corrected}} + \varepsilon},\  \quad b := b - \alpha \frac {v_{db}^{corrected}} {\sqrt{S_{db}^{corrected}} + \varepsilon} && && &&\text{# update weights}
+\end{alignat*} \\
+\} $
+
+Note that the inner loop over each layer is not shown above.
+
+$
+v_{dW^{[l]}} = \beta_1 v_{dW^{[l]}} + (1 - \beta_1) \dfrac{\partial \mathcal{J} }{ \partial W^{[l]}  } \\
+v^{corrected}_{dW^{[l]}} = \dfrac{v_{dW^{[l]}}}{1 - (\beta_1)^t} \\
+s_{dW^{[l]}} = \beta_2 s_{dW^{[l]}} + (1 - \beta_2) (\dfrac{\partial \mathcal{J} }{\partial W^{[l]} })^2 \\
+s^{corrected}_{dW^{[l]}} = \dfrac{s_{dW^{[l]}}}{1 - (\beta_1)^t} \\
+W^{[l]} = W^{[l]} - \alpha \dfrac{v^{corrected}_{dW^{[l]}}}{\sqrt{s^{corrected}_{dW^{[l]}}} + \varepsilon}
+$
+
+Note another loop is 
 
 Hyperparameter choices:
 
@@ -324,6 +338,24 @@ Note that the decay rate is yet another hyperparameter.
 $\alpha$ can also be manually reduced when training takes a long time, and there is a small number of models to train.
 
 
+## The problem of local optima
 
+In the early days of deep learning people used to worry about the optimisation algorithms getting stuck in local optima. 
+
+![wk2-local-optima.png](wk2-local-optima.png)
+
+These days we understand that in very high dimensional spaces (ie a large neural network), it's far more likely to run into saddle points rather than a true local optima (where *all* of the many dimensions will need to be increasing away from the point)
+
+With $n$ dimensions, the probability of a point being a local optima is (Andrew says maybe) in the order of $2^{-n}$
+
+### Plateaus
+
+Plateaus are a problem as with a very small gradient, the algorithm can take a long time to move toward the minima.
+
+![wk2-plateau.png](wk2-plateau.png)
+
+Momentum, RMSprop or Adam can really help in this case. Eg, Adam will increase the rate of moving down the plateau.
+
+-----------
 
 [Credit for some images](http://x-wei.github.io/Ng_DLMooc_c2wk2.html)
