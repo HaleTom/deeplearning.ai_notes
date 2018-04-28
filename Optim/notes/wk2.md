@@ -65,6 +65,9 @@ Guidelines for choosing mini-batch size:
 Try a few different values for the batch size to find out which makes the training fastest.
 
 ### Implementation
+
+At the beginning of each epoch:
+
 **Shuffle**: Create a shuffled version of the training set (X, Y) as shown below. Each column of X and Y represents a training example. Note that the random shuffling is done synchronously between X and Y. Such that after the shuffling the $i^{th}$ column of X is the example corresponding to the $i^{th}$ label in Y. The shuffling step ensures that examples will be split randomly into different mini-batches. 
 
 ![wk2-minibatch_shuffle.png](wk2-minibatch_shuffle.png)
@@ -196,9 +199,9 @@ So in order for the whole series of coefficients to sum to $1$, we simply re-sca
 Note carefully that this division is done to $v_t$ AFTER you have summed that series, which is still the same old iteration formula, 
 
 $ \begin{align*}
-v_t &= \frac { v_{t\text{ (no bias correction)}} } { (1-\beta^t) } \\[6pt]
-v_{t\text{ (no bias correction)}} &= \beta v_{t-1} + (1-\beta) \theta_t \\[6pt] 
-v_t &= \dfrac { (1-\beta) (\theta_t + \beta \theta_{t-1} + \beta^2 \theta_{t-2} + … + \beta^{t-1} \theta_1) } { (1-\beta^t) }\\[6pt] 
+v_{t\text{ (no bias correction)}} &= \beta v_{t-1} + (1-\beta) \theta_t \quad && \text{# on each iteration of gradient descent} \\[6pt] 
+v_t^{corrected} &= \frac { v_{t\text{ (no bias correction)}} } { (1-\beta^t) }  && \text{# apply bias correction}\\[6pt]
+v_t^{corrected} &= \dfrac { (1-\beta) (\theta_t + \beta \theta_{t-1} + \beta^2 \theta_{t-2} + … + \beta^{t-1} \theta_1) } { (1-\beta^t) } && \text{# the expanded formula}\\[6pt] 
 \end{align*}$
 
 ## Gradient descent with momentum
@@ -281,17 +284,7 @@ $
 \end{alignat*} \\
 \} $
 
-Note that the inner loop over each layer is not shown above.
-
-$
-v_{dW^{[l]}} = \beta_1 v_{dW^{[l]}} + (1 - \beta_1) \dfrac{\partial \mathcal{J} }{ \partial W^{[l]}  } \\
-v^{corrected}_{dW^{[l]}} = \dfrac{v_{dW^{[l]}}}{1 - (\beta_1)^t} \\
-s_{dW^{[l]}} = \beta_2 s_{dW^{[l]}} + (1 - \beta_2) (\dfrac{\partial \mathcal{J} }{\partial W^{[l]} })^2 \\
-s^{corrected}_{dW^{[l]}} = \dfrac{s_{dW^{[l]}}}{1 - (\beta_1)^t} \\
-W^{[l]} = W^{[l]} - \alpha \dfrac{v^{corrected}_{dW^{[l]}}}{\sqrt{s^{corrected}_{dW^{[l]}}} + \varepsilon}
-$
-
-Note another loop is 
+Note that the inner loop to update each of the $L$ layers is not shown above.
 
 Hyperparameter choices:
 
