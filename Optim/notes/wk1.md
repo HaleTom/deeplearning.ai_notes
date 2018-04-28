@@ -293,9 +293,14 @@ The mean is set to $0$ and the variance to $1$:
 $ \displaystyle \mu = \frac 1 m \sum_{i=1}^m x^{(i)} \\
 x := x - \mu $
 
-1. Scale by the variance:
-$ \displaystyle \sigma^2 = \frac 1 m \sum_{i=1}^m x^{(i)} ** 2 \ \mathrm{(element wise)} \\
-x /= \sigma^2 $
+1. Scale by the variance (**NB**: mean is already subtracted):
+$ \displaystyle \sigma^2 = \dfrac 1 m \sum_{i=1}^m \left(x^{(i)} \right)^2 \quad \text{# element-wise for matrix} \\[6pt]
+x = x / \sigma^2 $
+
+Or, in a single step:
+$x := \dfrac {x - \mu } {\sqrt{\sigma^2} + \varepsilon} $
+
+Note the formula given in the lecture is wrong (no $\sqrt \ $). Adding $\varepsilon$ prevents division by $0$.
 
 `sigma` is a vector of variances of each of the features.
 
