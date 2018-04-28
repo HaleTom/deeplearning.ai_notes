@@ -93,6 +93,16 @@ See also [Comprehensive list of activation functions in neural networks with pro
 
 ELU = [Exponential Linear Unit](https://arxiv.org/abs/1511.07289). The graph is rounded where ReLU has a sharp corner.
 
+#### Softplus
+
+
+
+## Summary pic
+
+Note softplus at bottom.
+
+[![wk3-activation-fns.png](wk3-activation-fns.png)](https://towardsdatascience.com/activation-functions-neural-networks-1cbd9f8d91d6)
+
 
 ## Why is a non-linear activation function needed?
 
