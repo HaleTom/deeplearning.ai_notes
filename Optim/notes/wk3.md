@@ -119,20 +119,72 @@ Previously, we saw how to normalise the input layer:
 $ \begin{alignat}{1} \displaystyle
 \mu &= \dfrac 1 m \sum_{i=1}^m z^{(i)} \\[6pt]
 \sigma^2 &= \dfrac 1 m \sum_{i=1}^m \left(z^{(i)} - \mu \right)^2 \quad \text{# element-wise for matrix} \\[6pt]
-\hat z^{(i)} &:= \dfrac {z^{(i)} - \mu } {\sqrt{\sigma^2 + \varepsilon}} \\[6pt]
+\overset z z^{(i)} &:= \dfrac {z^{(i)} - \mu } {\sqrt{\sigma^2 + \varepsilon}} \\[6pt]
 \end{alignat}$
+
+Above I am using $\overset z z$ as [notation for the normalised value of $z$](https://stats.stackexchange.com/q/343306/162527).
 
 The same process can be applied to the output of any hidden layer. Normalisation can be done on either $z$ or $a$, but is much more often done on $z$.
 
 The above gives mean $\mu = 0$ and variance $\sigma^2 = 1$. To tune the mean and variance, we use:
 
-$\tilde z^{(i)} = \gamma \hat z^{(i)} + \beta $
+$\tilde z^{(i)} = \gamma \overset z z^{(i)} + \beta $
 
-Where $\gamma$ and $\beta$ are learnable parameters of the network, updated by gradient descent just like the $W$s and $b$s.
+Where $\tilde z$ is the batch normalised value of $z$, and $\gamma$ and $\beta$ are learnable parameters of the network, updated by gradient descent just like the $W$s and $b$s.
+
+$\gamma$ sets the mean and $\beta$ sets the variance. (Note this is a different $\beta$ to EWMA - both papers' authors used the same symbol which is mimiced here)
 
 If $\gamma = \sqrt{\sigma^2 + \varepsilon}$ and $\beta = \mu$ this inverts the normalisation so that $\tilde z^{(i)} = z^{(i)}$.
 
 As input to the activation function, use $\tilde z^{(i)}$ instead of $z^{(i)}$.
+
+Batch norm is applied per-mini-batch if mini-batches are in use.
+
+Previously $z^{[l]} = W^{[l]}a^{[l-1]} + b$. Batch norm calculates and then subtracts the mean ($\mu$), cancelling out any addition of $b$, so $b$ is not added with batch norm. $\beta^{[l]}$ will set the mean of the layer's activations instead.
+
+The shape of $\beta$ and $\gamma$ are both $(n^{[l]}, m)$, identical the the previous shape of $b$.
+
+$d\beta$ and $d\gamma$ are both calcuated in gradient descent and updated just like the $dW$s.
+
+### Why does Batch Norm work?
+
+Like input normalisation, batch norm standardises the mean and variance for faster learning.  There are some further intuitions as to why batch norm speeds learning, though.
+
+
+#### Batch norm reduces covariate shift
+
+It makes weights of later layers more robust to changes in earlier layers of the network. 
+
+If you learn some $X \to Y$ mapping and the distribution of $X$ changes, you may need to retrain your learning algorithm. An example is training a cat / non-cat classifier only on black cats, and then trying to classify ginger cats. The ground truth function ("cat or not") remains the same. The data distribution changing is called "covariate shift".  
+
+A deep NN layer also suffers from covariate shift - the distribution of its input will constantly change as the earlier layer's weights and bias terms are learned. (Note again the function trying to be learned by the later layers remains the same, like in the cat case).
+
+![wk3-covariate-shift.png](wk3-covariate-shift.png)
+
+With BN, a layer's input distribution will have optimal (tuned over time) and consistent mean ($\beta$) and variance ($\gamma$), meaning that the learning of later layers can be less dependent on the changing values of weights in previous layers. BN weakens the coupling between the earlier and later layers, allowing for more efficient independent learning.
+
+#### Batch norm as regularisation
+
+Each mini-batch's $z$ or weighted sum is scaled by mean/variance of just that minibatch.  The non-exact mini-batch means and variances adds noise to $\tilde z^{[l]}$.
+
+Similar to dropout (multiplying by either $0$ or $1$), this adds noise to each layer's activations.
+
+Therefore BN has a slight regularization effect (which gets smaller as minibatch size grows). The slight regularisation is only a side effect - use other methods if there is overfitting.
+
+### Batch norm at test time
+
+Batch norm processes examples one mini-batch at a time, but at test time, you may need to process one example at a time.
+
+Taking the mean and variance of just one example doesn't make sense. 
+
+The test-time $\mu$ and $\sigma^2$ are estimated using an EWMA across the training set mini-batches.
+
+For each mini-batch ($t$) and each layer ($l$), an EWMA is calculated for $\mu^{\{t\}[l]}$ and ${\sigma^2}^{\{t\}[l]}$. These two EMWA values are then used at test time.
+
+In the formula $\tilde z^{(i)} = \gamma \overset z z^{(i)} + \beta $, the $\gamma$ and $\beta$ values used to calculate $\tilde z$ are the ones learned from the training set.
+
+One could in theory run the entire training set through the trained network to get a precise $\mu$ and $\sigma^2$, but in practice what people usually do is implement a EWMA (sometimes called a running average) to get a rough estimate of the values to use at test time.  In practice the process is pretty robust to the exact method used to get the test-time $\mu$ and $\sigma^2$.  The deep learning framework will have a default which should work pretty well. 
+
 
 
 
