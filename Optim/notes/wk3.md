@@ -83,6 +83,11 @@ r &\in [-3, -1] \\
 \beta &= 1 - 10^r \\
 \end{alignat}$
 
+Or:
+
+    r = np.random.rand()
+    beta = 1 - 10**(-r - 1)  # But this may be a specific example not general
+
 It's important to do this as the formula for the approx number of datapoints averaged over, namely $\dfrac 1 {1- \beta}$ is very sensitive in changes when $\beta$ is close to $1$.
 
 Eg, when searching $\beta \in [0.9000, 0.9005]$, both ends of the range average over $\approx 10$ datapoints.
@@ -142,7 +147,7 @@ Batch norm is applied per-mini-batch if mini-batches are in use.
 
 Previously $z^{[l]} = W^{[l]}a^{[l-1]} + b$. Batch norm calculates and then subtracts the mean ($\mu$), cancelling out any addition of $b$, so $b$ is not added with batch norm. $\beta^{[l]}$ will set the mean of the layer's activations instead.
 
-The shape of $\beta$ and $\gamma$ are both $(n^{[l]}, m)$, identical the the previous shape of $b$.
+The shape of $\beta$ and $\gamma$ are both $(n^{[l]}, 1)$, identical to the shape of $b$.
 
 $d\beta$ and $d\gamma$ are both calcuated in gradient descent and updated just like the $dW$s.
 
@@ -185,10 +190,138 @@ In the formula $\tilde z^{(i)} = \gamma \overset z z^{(i)} + \beta $, the $\gamm
 
 One could in theory run the entire training set through the trained network to get a precise $\mu$ and $\sigma^2$, but in practice what people usually do is implement a EWMA (sometimes called a running average) to get a rough estimate of the values to use at test time.  In practice the process is pretty robust to the exact method used to get the test-time $\mu$ and $\sigma^2$.  The deep learning framework will have a default which should work pretty well. 
 
+## Multi-class classification with Softmax
+
+Instead of binary classification which detects the presence / absence of something, multi-class classification classifies the input into one of $C$ classes.
+
+If the output layer is interpreted as a probability, then softmax is good activation function to choose.
+
+Notation:
+
+$C$ = number of classes
+
+Softmax generalises logistic regression to $C$ classes. If $C = 2$, [softmax reduces to logistic regression](https://stats.stackexchange.com/questions/233658/softmax-vs-sigmoid-function-in-logistic-classifier).
+
+The [name softmax](https://math.stackexchange.com/questions/1888141/why-is-the-softmax-function-called-that-way) is a contrast to "hardmax", ie argmax, or one-hot encoding.
+
+Unlike other activation functions so far, softmax takes a vector as input and outputs a vector of the same size.
+
+$\begin{align}
+\displaystyle t &= e^{z^{[L]}} & \quad \text{# temporary variable, shape same as } a^{[L]} \\[6pt]
+a^{[L]} &= \frac {t_i} {\sum_{i=1}^{n^{[L]}} t_i }
+\end{align}$
+
+Raising $e$ to the power of $z$ spreads out the values, making the gaps between them larger. Dividing by the sum of all elements of $t$ has the individual probabilities sum to $1$.
+
+For a single layer network, the decision boundary looks like:
+
+![wk3-softmax-decision-boundary.png](wk3-softmax-decision-boundary.png)
+
+Ie, softmax creates linear decision boundaries between the different classes.
+
+### Training a softmax classifier
+
+For a vectorised implementation, both $y$ and $\hat y$ will have shape $(C, m)$.
+
+#### Loss function
+
+$\displaystyle \mathscr L(\hat y, y) = - \sum_{i=1}^{C} y_i \log \hat y_i$
+
+Where the ground truth values $y_i$ are 0, this will add nothing to the sum.
+
+Where the ground truth $y_i = 1$, the loss is $-1 \cdot \log \hat y_i$.
+
+To minimise this loss, $\hat y_i$ needs to be as large as possible, ie, as close to $1$ as possible.
+
+This turns out to be a form of maximum likelihood estimation in statistics.
+
+#### Cost function
+
+$J(W^{[1]}, b^{[1]}, W^{[2]}, b^{[2]}, \cdots) = \displaystyle \frac 1 m   \sum_{i=0}^m \mathscr L (\hat y, y)$
+
+#### Derivatives
+
+$dz^{[l]} = \hat y - y$
 
 
+## Deep learning programming frameworks
+
+Andrew lists the following as credible choices (for some subsets of applications) of DL frameworks with a dedicated user / developer community.
+
+* Caffe / Caffe2
+* CNTK
+* DL4J
+* Keras (wraps Tensorflow and Theano)
+* Lasagne
+* mxnet
+* PaddlePaddle
+* Tensorflow (python)
+* Theano (python)
+* Torch (lua)
+
+When choosing a DL framework, consider:
+
+* Ease of programming (development and deployment)
+* Speed
+* Openness (licence, governance, trustworthiness to remain open)
+
+### Tensorflow
+
+The heart of a TensorFlow program is something to compute a cost. TF automatically figures out the deriviatives and how to minimise that cost.
+
+Motivating problem: minimize cost function $J(w) = (w-5)^2$
+
+    import tensorflow as tf
+
+Define parameter to optimize:
+
+	w = tf.Variable(0, dtype=tf.float32)  # (<initial-value>, name=<optional-name>)
+
+Define cost function:
+
+	cost = tf.add(tf.add(w**2), tf.multiply(-10., w)), 25) # w^2 - 10w + 25
+	# It's also possible to use tf-reloaded operators:
+	# cost = w**2 - 10 * w + 25
+
+Now the computation graph is defined. Backward propagation derivatives are auto-computed.
+
+Tell TF to minimize the cost with GD optimizer:
+
+	train = tf.train.GradientDescentOptimizer(0.01).minimize(cost)  # alpha = 0.01<F24><F25>
+
+To start the training:
+Initialize vars → create session → run operations in session 
+
+	init = tf.global_variables_initializer()  
+	session = tf.Session()  
+	session.run(init)  # initialise global variables
+	session.run(train) # run 1 iteration of training
+
+Alternative format:
+
+	with tf.Session() as session:  
+		session.run(init)  
+		session.run(train)
+
+This allows for a better clean-up if there is an exception in the block.
+
+To inspect the value of a parameter:
+
+	print(session.run(w))
+
+Run 1000 iterations of training (here, gradient descent):
+
+	for i in range(1000): session.run(train)
+
+When the loss function depends on training data, define a placeholder for training data. A placeholder is a variable whose value will be assigned later.
+
+	x = tf.placeholder(tf.float32, [3,1])
+	cost = x[0][0] * w**2 + x[1][0] * w + x[2][0]
 
 
-|  Date      | Name                                                | Author(s) |
-|------------|---------------------------------------------------------------------------------------------------------------------------------|-------------------------------------
-| 2015-02-11 | [Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift](https://arxiv.org/abs/1502.03167)| Sergey Ioffe, Christian Szegedy
+To feed actual data value to placerholder: use `feed_dict` in `session.run()`:
+
+    coefficients = np.array([1., -10., 25.]).reshape((3,1)
+    session.run(train, feed_dict={x: coefficients})
+
+Also use `feed_dict` to feed in mini-batches.
