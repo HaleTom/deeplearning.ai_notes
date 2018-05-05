@@ -292,15 +292,18 @@ Tell TF to minimize the cost with GD optimizer:
 To start the training:
 Initialize vars → create session → run operations in session 
 
-	init = tf.global_variables_initializer()  
-	session = tf.Session()  
+	init = tf.global_variables_initializer()
+	session = tf.Session()
 	session.run(init)  # initialise global variables
 	session.run(train) # run 1 iteration of training
 
+[What does `tf.global_variables_initializer` do?](https://stackoverflow.com/q/44433438/5353461)
+
 Alternative format:
 
-	with tf.Session() as session:  
-		session.run(init)  
+    # This takes care of closing the session for you :)
+	with tf.Session() as session:
+		session.run(init)
 		session.run(train)
 
 This allows for a better clean-up if there is an exception in the block.
