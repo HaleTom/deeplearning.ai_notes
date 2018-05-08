@@ -63,3 +63,28 @@ How to become good at deep learning?
 Develop the intuitions and don't be afraid of the math. The math will become clear when you understand what's going on. With a backgroun in CS and math, he says in about 6 months one can learn enough to start research experiments. Probability, algebra, calculus and optimisation were mentioned as the add-ons to CS.
 
 
+# Yuanqing Lin
+
+Head of Baidu research. Selected by Chinese goverment to build national deep learning research lab.
+
+The lab's mission is to build hopefully the biggest deep learning platform, offering compute through Paddle Paddle, massive data sets, and uptake in Baidu. 
+
+The lab will allow someone to publish code, dataset and compute configuration so that results can be easily reproduced, within a few seconds.
+
+Majored in optics. Very good math background. Did PhD at UPenn? university, wanting to do something new.
+
+Started working on computer vision relatively late. Won the first ever of Imagenet challenge. 
+
+## What should people outside of China know about DL in China?
+
+DL is really boming. Search enginines, face recoginition, surveillance, e-commerce. 
+
+There is a positive feedback loop which starts with a toy dataset and a good enough algorithm, which then gets applied to real-world problems and gets access to more data to produce and even better algorithm, which gets excellent performance and then access to even larger amounts of data. He drew an exponential curve in the air at 9:56 :)
+
+He really only investigates R&D opporunities which have this positive feedback loop as other companies will likely be better at linear development.
+
+## What advice for someone entering AI / DL?
+
+Start with open source frameworks, TensorFlow, Caffe2, PaddlePaddle. 
+
+Yuanquing learned PCA, ?DA? before learning deep learning, laying down the foundations. He also mentioned graphical models and that knowing these gives one very good intuition about how leep learning works. 
