@@ -328,3 +328,6 @@ To feed actual data value to placerholder: use `feed_dict` in `session.run()`:
     session.run(train, feed_dict={x: coefficients})
 
 Also use `feed_dict` to feed in mini-batches.
+
+## See also
+[Entropy, Cross-entropy and KL-divergence](entropy-x-entropy-KL-divergence.md)
