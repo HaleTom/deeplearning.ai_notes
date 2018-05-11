@@ -253,7 +253,9 @@ In a classification task, if:
 
 Then the gap between human and Train performance shows that the algorithm isn't even fitting the training set well. Therefore address the bias problem (bigger network, run GD longer).
 
-In the previous examples in this course, the assumption was that the tasks had a Bayes error of almost $0$.
+In the previous examples in this course, the assumption was that the tasks had a Bayes error of almost $0$. This is pretty true when identifying cats, but wouldn't hold in the case of a transcript of a muffled conversation in a noisy environment.
+
+All comparisons need to be made relative to Bayes error.
 
 In a different classification task, assume:
 * Human error - 7.5%
@@ -268,10 +270,88 @@ Terminology:
 
 * *Avoidable bias* - the gap between training error and Bayes error
   Interpretation: some level of error is unavoidable because Bayes err is not 0
-* *Avoidable Variance* -  the gap between training error and dev error
+* *Variance* -  the gap between training error and dev error
 
+## Understanding Human Level Performance
 
+Human-level error is a proxy or estimation of Bayes error or theoretical minimum error.
 
+![wk1-diagnosis-error](wk1-diagnosis-error.png)
 
+For training, use the lowest human error as an estimate (upper bound) of Bayes error. 
 
+If publishing a paper, define the term "human-level" well, probably comparing against the different classes.
 
+### Error analysis example
+
+Suppose:
+
+* Human errors - 1%, 0.7%, 0.5% (depending on the class of doctor)
+* Training error - 5%
+* Dev error - 6%
+
+Here we have:
+
+* Avoidable bias - 4.5% (using lowest human error)
+* Variance - 1% (difference between train and dev errors)
+
+As the avoidable bias is greater, focus on resolving this issue first.
+
+If the variance were greater than the bias, then focus there first.
+
+## Surpassing human-level performance
+
+When human-level performance is surpassed, using it as an estimate of Bayes error is no longer useful.
+
+If the Training error is better than the best human performance, does it indicate overfitting or performance surpassing human-level?
+
+Assuming the errors:
+* Human team - 0.5%
+* Single human - 1%
+* Training error - 0.3%
+* Dev error - 0.4%
+
+When surpassing human-level performance, there is no quick estimation for Bayes error.
+
+It's not possible to know where the largest difference is, and where to focus:
+
+* (Dev error) - (Unknown bayes) = (Unknown avoidable bias)
+* (Train error) - (Dev error) = (Known Variance)
+
+Which difference is larger? It's not possible to know whether to work on bias or variance reduction.
+
+Additionally, when surpassing human performance, it's a lot harder to rely on human intuition as to performance optimisations.
+
+While progress can still be made, the choices most likely to improve performance are less clear.
+
+### Domains of super-human performance
+
+* Online advertising - estimating how likely someone is to click on an ad
+* Product recommendations
+* Logistics, ie transit times
+* Loan approvals based upon repayment likelihoods
+
+All of the above are:
+* Based on structured data
+* Are not natural perception problems
+* Have processed lots of data (more than a human ever could)
+
+Humans are extremely good at what we call natural perception tasks.
+
+Super human performance also exists in:
+* Some speech recognition
+* Image recognition 
+* Medical (EGC, skin cancer, narrow radiology tasks)
+
+## Improving model performance
+
+There are two assumptions of supervised learning:
+
+1. You can fit the training set pretty well
+   * Ie, you can achieve low avoidable bias
+1. The training set generalises well to the dev / test sets
+   * Low variance is possible
+
+## Roadmap summary
+
+![wk1-causes-solutions.png](wk1-causes-solutions.png)
