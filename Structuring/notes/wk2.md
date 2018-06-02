@@ -19,7 +19,7 @@ It could take months to work on the dog problem, and there may not be sufficient
 Error analysis can tell whether or not it is worth the effort.
 
 Error Analysis:
-1. Get about 100 mislabeled Dev set examples
+1. Get about 100 mislabelled Dev set examples
 1. Manually count up how many are dogs
 
 Suppose 5 mislabelled images are dogs. This means that even if the dog problem were solved, it would only affect 5 out of 100 misclassifications.
@@ -28,7 +28,7 @@ The best error reduction based on dogs would be from 10% down to 9.5%, or a 5% r
 
 This 5% gives a ceiling or upper bound on how much performance can be increased by working on dog misclassifications.
 
-It may well be worth while working on the largest case of misclassifications reather than dogs.
+It may well be worth while working on the largest case of misclassifications rather than dogs.
 
 Sometimes in ML it is disparaged to hand engineer things, but if building applied systems, this simple counting procedure can save a lot of time deciding what is the most important problem to focus on.
 
@@ -158,4 +158,63 @@ There is no systematic approach, but there are things that can be tried:
   * Eg, in-car background noise
 * Make training data more similar / collect more data similar to dev/test set
   * Eg, simulate in-car noise (artificial data synthesis)
+
+### Artificial data synthesis
+
+Generally: ensure that the synthesised data is not simulating just a tiny subset of all the possible examples.
+
+Two examples:
+
+#### In-car audio
+If there is 10,000 hours of audio and only 1 hour of background noise to synthesise with, it's possible to overfit to the 1 hour of background noise, even though it sounds the same to the human ear.
+
+Getting more background noise could help. (Ravi: or perhaps randomising the 1 hour better through the training examples?)
+
+#### Car recognition
+Some people have tried to use video game renditions of cars to train on. The issue is that there are often only approx 20 other types of cars and it's very easy to over fit to them.
+
+# Learning from multiple tasks
+
+## Transfer learning
+Learning from one task can be applied to another task. The network's learnings can be adapted or transferred to the new task. Generally transfer learning is used when it's more difficult to get data for the new task than for the original task.
+
+Low-level features can be shared for different tasks. Example: Cat classifier applied to X-ray scans diagnosis
+
+Implementation: Change last output layer of original model: randomly initialise $w^{[L]}$ and $b^{[L]}$ of last layer(s) and retrain the network.
+
+Rule of thumb: given a small dataset, only retrain last layer's parameters (or the last couple of layers).
+
+Instead of resetting the weights of the last layers to random values, new layers (plural) can be added on in place of the original output layer.
+
+**Terminology**
+*Pre-training*: The training of the network on the initial, non-target dataset
+*Fine-tuning*: Training on the target dataset with some of the parameters learned in pre-training
+
+The smaller the difference between the datasets, the more effective the transfer learning will be. 
+
+For example detection of edges, dots, lines, corners, and curves will be common among pictures. Maybe even parts of objects.
+
+Instead of resetting the weights of the last layers to random values, new layers (plural) can be added on in place of the original output layer.
+Depending on how much data you have, you might just retrain the new layers of the network, or maybe you could retrain even more layers of this neural network. 
+
+[Transfer learning: How and why retrain only final layers of a network?]( https://stats.stackexchange.com/q/349138/162527 )
+
+Transfer learning only makes sense when there is a lot of data in the problem transferring *from*, and relatively little data for the problem transferring *to*.
+
+When to use transfer learning from task A to B: 
+
+* Task A and B have the same type of input
+* There is a lot of data for task A, relatively small amount of data for task B
+  (The task B data is a lot more valuable - the task A learnings won't be as useful)
+* Low level features of task A could be helpful for task B
+
+If task A has less data than task B, then there would be minimal meaningful gain.
+
+## Multi-task learning
+In Transfer learning there is a sequential learning of Task A and then task B.
+
+In multi-task learning, many tasks are learned in parallel, and each task hopefully helps the other tasks. 
+
+example: self-driving car
+multiple kind of objects to detect
 
