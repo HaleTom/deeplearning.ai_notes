@@ -145,6 +145,7 @@ If overfitting to the Dev set, consider getting more Dev set data.
 It's possible to have the Dev error smaller than the Train-Dev error if the expected data is more easily classifiable.
 
 Here the red indicates what was seen above. For a complete error overview, it could be useful to include the human level performance and Training error on the domain-specific data also.
+
 ![wk2-full-error-table.png](wk2-full-error-table.png)
 
 
@@ -215,6 +216,115 @@ In Transfer learning there is a sequential learning of Task A and then task B.
 
 In multi-task learning, many tasks are learned in parallel, and each task hopefully helps the other tasks. 
 
-example: self-driving car
-multiple kind of objects to detect
+Example: self-driving car with multiple kinds of objects to detect:
 
+![wk2-multiple-targets.png](wk2-multiple-targets.png)
+
+Train the network without SoftMax so that it can learn all objects simultaneously:
+
+![wk2-multi-task-network.png](wk2-multi-task-network.png)
+
+Above, the loss function is summed over each element of the output vector.
+
+[Difference between loss, cost and objective functions](https://stats.stackexchange.com/a/179027/162527)
+
+The above neural network is solving 4 problems simultaneously (it has 4 output nodes). 4 separate networks could have been trained, but if some of the features learned in the first few layers can be shared in all 4 problems, then it's better to train a single network. Training one network to do 4 things results in better performance than training 4 completely separate neural networks to do the 4 tasks separately.
+
+Multi-task learning still works if some images are only labelled with some of the objects contained therein.  Some images could be labelled '?' instead of 0/1 for the absence/presence of an object.
+
+To implement partially labelled images, in the sum above, only sum over values of $j$ which are non-'?'.
+
+When does multi-task learning make sense?
+
+* Training on a set of tasks which could benefit from having shared lower-level features
+* (Usually, but not hard and fast rule:) The amount of data available for each task is quite similar
+  * The other tasks in aggregate need to have a lot more data than any given single task, so that the transfer learning effect applies
+* When you can train a NN big enough to do well on all the tasks
+  * Researcher Richke? Rarner? found that the only time multi-task learning should hurt performance is when the NN isn't big enough. 
+
+In practice, multi-task learning is used much less often than transfer learning. It's rarer to have a set of similar-ish tasks that all can be trained together with about the same amount of data for each task.
+
+Multi-task learning is more common in computer vision object detection. 
+
+## End-to-End Deep Learning
+
+### What is End-to-End deep learning 
+
+Some data processing or learning systems require a pipeline of multiple stages of processing, and E2E can replace these with (usually) a single NN.
+
+Side effect: Some researchers devoted their careers to designing individual steps of the pipeline and it was very challenging to have their work replaced by a black box which obsoleted their research.
+
+Speech Recognition: 
+
+A lot of data may be required for good performance.
+
+For example, on 3,000 hours the traditional pipeline approach works well. With DL, between 10,000 to 100,000 hours would be required for parity performance.
+
+In an intermediate approach with a medium amount of data, a few sequential stages of the pipeline could be replaced with an NN.
+
+#### Facial recognition
+Currently the best facial recognition performance comes when this task is broken down into two steps:
+
+1. Locate the face within the image
+2. Pass the cropped face image to a NN for identity classification.
+  * Ie, a NN takes two images, and compares the presented face with each image on file, determining if the similarity is sufficient.
+
+Why a two-step process?
+
+1. The two individual tasks are simpler
+1. There is a lot of labelled data for training on each of the two subtasks
+  * There is a lot less data for the end-to-end task.
+
+#### Machine translation
+
+Translating English to French used to go via structural analysis and a lot of other steps.
+
+These days there is a sufficiently large dataset of $(x, y)$ pairs to train a NN to go directly from English to French.
+
+#### Estimating a child's age from X-ray
+
+There isn't enough data today to go from an image to an age.
+
+Instead, the bones and their lengths are identified, and from there the age is estimated. There is more data available for training on the individual tasks.
+
+### Pros and Cons of End-to-End Deep Learning
+
+Pros and cons of end-to-end deep learning:
+
+Benefits:
+* Lets the data speak for itself - the NN will learn the best mapping from $x$ to $y$ given enough $(x,y)$ pairs.
+  * Removes human preconceptions of how a task has traditionally been performed
+* Less hand-design of intermediate components is required
+
+Drawbacks:
+* May need a large amount of data
+* Excludes potential useful hand-designed components
+  * If there is not a lot of data, backprop may not be able to learn useful features for the problem.
+  * Hand-designing components is a way to inject human knowledge into the algorithm.
+
+Learning algorithms have two sources of knowledge:
+1. The data itself
+2. Hand-designed components/features
+
+When there is less data, the hand-designed source of knowledge is useful to allow humans to inject learning into an algorithm.
+
+### When to use End-to-End Deep Learning
+
+The key question is:
+
+Is sufficient data available to learn a function of the complexity needed to map from x to y?
+
+An example of lower "complexity" is determining what part of an image is a face, vs also recognising whose face it is at the same time.
+
+#### Drive.ai example
+
+![wk2-self-driving-car.png](wk2-self-driving-car.png)
+
+* Use DL to learn individual components
+* Choose $ x \to y $ mappings depending on what tasks have data easily available
+* Given current data availability and the types of things we can learn with NNs today, an image to steering E2E solution is not the most promising approach
+
+
+## Quiz questions
+
+The answers to Q8 and Q10 were debated in the forums. I overfitted to the grading system :)
