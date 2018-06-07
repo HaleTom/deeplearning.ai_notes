@@ -80,3 +80,55 @@ RL is fascinating to watch the learning of what works, but is time consuming and
 #### TODO based on Pieter's recommendations:
 * Andrej Karpathy's deep learning course [Convolutional Neural Networks for Visual Recognition (CS231n)](http://cs231n.stanford.edu/)
 * Berkley's deep reinforcement learning course
+
+-----------
+
+# Ruslan Salakhutdinov
+
+Director of Research at Apple, Prof at Carnegie Mellon.
+
+Masters at Toronto, then took a year in financial sector. Bumped into Hinton who invited him to his office and inspired him.  Started PhD with Geoff 3 months later.
+
+Co-authored one of the early papers on RBMs.
+
+Progress moved from RBMs to Deep RBMs. 
+
+What's happening with RBMs?
+
+Around 2009/2010 we realised that with GPUs coming on to the scene, training a deep NN was giving the same or better results than pre-trained or stacked RBMs. BMs and RBMs were previously needed to initialise NN weights before the greater compute required for backprop.
+
+VAEs, RBMs, GANs are generative models. Learning algorithms require Markov Chain Monte Carlo, Variational learning, etc which are not as scalable as backprop. More efficient ways of training these models are needed.  Convolution is difficult to integrate.
+
+Variational Auto Encoders can be looked at as directed versions of Boltzmann Machines.  Reparameterisation trick allows back prop within a stochastic system. But we haven't yet worked out how to do something similar with RBMs.
+
+Generative semi-supervised, and unsupervised vs supervised approaches:
+
+Most of the successes recently have been in supervised learning. 
+
+In the early days, unsupervised learning was viewed as unsupervised pre-training as we didn't know how to train multi-layer systems.  Even today, working with lots of unlabelled data and few labelled examples, unsupervised pre-training or building generative models can help with supervised tasks.
+
+GANs, VAEs. His lab is currently working on Deep Energy Models. 
+
+Semi-supervised learning is the next frontier. Where some hints are given from some examples and then lots of unlabelled data is given to annotate.
+
+Advice for people wanting to enter research or applied work:
+
+Try different things and not be afraid to try new things. Don't be afraid to tackle problems that others say are impossible.
+
+Implement the algorithms in code at the low level.
+
+PhD vs Company
+Apple has a mix of students who want to take both routes. 
+
+Academia: More freedom to work on long-term problems. Or some odd-ball problem. More freedom.
+
+Industry: Very exciting as the research is geared toward what will impact millions of users.  More resources in terms of compute. 
+
+There is lots of cross-pollination between the two. 
+
+Frontiers for research:
+
+* Unsupervised learning
+* Deep reinforcement learning - training agents in virtual worlds. Getting agents to communicate with each other. 
+* Reasoning and natural language understanding
+* Being able to learn from fewer examples
