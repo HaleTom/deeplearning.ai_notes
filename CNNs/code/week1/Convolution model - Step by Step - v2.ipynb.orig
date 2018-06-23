@@ -41,18 +41,11 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 8,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "The autoreload extension is already loaded. To reload it, use:\n",
-      "  %reload_ext autoreload\n"
-     ]
-    }
-   ],
+   "execution_count": 1,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
    "source": [
     "import numpy as np\n",
     "import h5py\n",
@@ -133,8 +126,10 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 33,
-   "metadata": {},
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
    "outputs": [],
    "source": [
     "# GRADED FUNCTION: zero_pad\n",
@@ -153,8 +148,7 @@
     "    \"\"\"\n",
     "    \n",
     "    ### START CODE HERE ### (≈ 1 line)\n",
-    "    X_pad = np.pad(X, ((0,0), (pad,pad), (pad,pad), (0,0)), 'constant', constant_values = (0, 0))\n",
-    "    X_pad = np.pad(X, ((0,0), (pad,pad), (pad,pad), (0,0)), 'constant', constant_values = 0)\n",
+    "    X_pad = None\n",
     "    ### END CODE HERE ###\n",
     "    \n",
     "    return X_pad"
@@ -162,48 +156,11 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 34,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "x.shape = (4, 3, 3, 2)\n",
-      "x_pad.shape = (4, 7, 7, 2)\n",
-      "x[1,1] = [[ 0.90085595 -0.68372786]\n",
-      " [-0.12289023 -0.93576943]\n",
-      " [-0.26788808  0.53035547]]\n",
-      "x_pad[1,1] = [[0. 0.]\n",
-      " [0. 0.]\n",
-      " [0. 0.]\n",
-      " [0. 0.]\n",
-      " [0. 0.]\n",
-      " [0. 0.]\n",
-      " [0. 0.]]\n"
-     ]
-    },
-    {
-     "data": {
-      "text/plain": [
-       "<matplotlib.image.AxesImage at 0x7fd78ae4fc88>"
-      ]
-     },
-     "execution_count": 34,
-     "metadata": {},
-     "output_type": "execute_result"
-    },
-    {
-     "data": {
-      "image/png": "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\n",
-      "text/plain": [
-       "<Figure size 360x288 with 2 Axes>"
-      ]
-     },
-     "metadata": {},
-     "output_type": "display_data"
-    }
-   ],
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
    "source": [
     "np.random.seed(1)\n",
     "x = np.random.randn(4, 3, 3, 2)\n",
@@ -295,8 +252,10 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 50,
-   "metadata": {},
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
    "outputs": [],
    "source": [
     "# GRADED FUNCTION: conv_single_step\n",
@@ -317,11 +276,11 @@
     "\n",
     "    ### START CODE HERE ### (≈ 2 lines of code)\n",
     "    # Element-wise product between a_slice and W. Do not add the bias yet.\n",
-    "    s = np.multiply(W, a_slice_prev)\n",
+    "    s = None\n",
     "    # Sum over all entries of the volume s.\n",
-    "    Z = np.sum(s)\n",
+    "    Z = None\n",
     "    # Add bias b to Z. Cast b to a float() so that Z results in a scalar value.\n",
-    "    Z = Z + float(b)\n",
+    "    Z = None\n",
     "    ### END CODE HERE ###\n",
     "\n",
     "    return Z"
@@ -329,17 +288,11 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 51,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "Z = -6.999089450680221\n"
-     ]
-    }
-   ],
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
    "source": [
     "np.random.seed(1)\n",
     "a_slice_prev = np.random.randn(4, 4, 3)\n",
@@ -1326,7 +1279,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.6.4"
+   "version": "3.6.0"
   }
  },
  "nbformat": 4,
