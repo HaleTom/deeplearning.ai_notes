@@ -38,6 +38,10 @@ To be able to work on larger images, implementing the convolution operation is r
 
 Research papers sometimes use "kernel" as another name for a filter. $\text{kernel}(x,y)$ denotes the similarity of point $x$ with another given point $y$.
 
+In the (rare) 1-channel input case, terms *filter* and *kernel* are interchangeable.
+
+In the general case, each filter is a collection of kernels - with one kernel for every input channel.
+
 To detect vertical edges, construct a 3x3 filter, and convolve the image with it:
 
 ![wk1-convolution_operation.png](wk1-convolution_operation.png)
@@ -149,7 +153,9 @@ To detect vertical edges only in the red channel, set the filter's other channel
 
 ![wk1-convolution-on-volume.png](wk1-convolution-on-volume.png)
 
-The output is still 2-D as the sum operation collapses the channels.
+The output is still 2-D as the sum operation collapses the input channels into a single output channel.
+
+Channels are a “view” of the image as a whole, emphasising some aspects, de-emphasising others.
 
 ### Using multiple filters at the same time
 
@@ -163,13 +169,13 @@ Above, a vertical and horizontal filter are applied at the same time.
 
 ## Implementing one layer of a CNN
 
-After convolving as described above, a bias term is added to all elements and a non-linearity applied:
+After convolving as described above, a bias term is added to all elements and a non-linearity applied.
 
 The convolution operation is a linear function, similar to $z = Wa + b$:
 
 ![wk1-conv-bias-relu.png](wk1-conv-bias-relu.png)
 
-If a layer has $n$ filters of size $w \times h \times d$, then it has $n(whd + 1)$ parameters. The $+n$ is for each filter's bias term.
+If a layer has $n$ filters of size $w \times h \times d$, then it has $n(whd + 1)$ parameters. The $+ n$ is because each filter has a single bias (added after the sum of products).
 
 No matter what size the input image is, the number of parameters remains determined by the number of filters and their size. This property helps reduce overfitting. 
 
@@ -224,6 +230,8 @@ Pooling layers:
 * Reduce the size of the representation
 * Speed up computation
 * Make feature detection more robust
+
+Pooling is done considering each input channel separately.
 
 ### Max pooling
 
@@ -342,3 +350,9 @@ Equivariance means that the system works equally well across positions, but its 
 ## Putting it together
 
 Compute Loss function as seen previously and use Adam or gradient descent to optimize.
+
+## Tensorflow
+
+In `tf.contrib.layers.fully_connected`, the fully connected layer automatically initializes weights in the graph and keeps on training them as you train the model. Hence, you did not need to initialize those weights when initializing the parameters. 
+
+In TensorFlow, the final softmax and cost function are lumped together into a single function, which you'll call in a different function when computing the cost. 
