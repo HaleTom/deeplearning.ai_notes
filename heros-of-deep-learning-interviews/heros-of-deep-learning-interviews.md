@@ -132,3 +132,40 @@ Frontiers for research:
 * Deep reinforcement learning - training agents in virtual worlds. Getting agents to communicate with each other. 
 * Reasoning and natural language understanding
 * Being able to learn from fewer examples
+
+--------
+
+# Yann LeCun
+
+Was always interested in intelligence and human evolution, space and technology.
+
+Studied electrical engineering. Stumbled on a book by Noam Chomsky and Jean Piaget (child development psychologist), a debate on nature vs nurture. Seymour Papert from MIT (on Jean Piaget's side), had worked on the Perceptron. Yann found everything he could on machine learning, but found that development stopped in the 1960s (this was roughly 1980). He did some projects with mathematics professors but the field had disappeared.  He read about neuroscience.
+
+On finishing engineering, he studied chip design.  The unsolved question from the 1960s was how to train a neural network with multiple layers. He read about hierarchy and [Fukishima's article on the neocognitron](http://vision.stanford.edu/teaching/cs131_fall1415/lectures/Fukushima1988.pdf) which is similar to what we now call CNNs but without backprop.  A society gave him a paper on Hopfield networks, or associative memory with neural nets. This paper renewed interest in the 1980s by physicists and psychologists.  ["Optimal perceptual inference"](https://papers.cnl.salk.edu/PDFs/Optimal%20Perceptual%20Inference%201983-646.pdf) - the first paper on Boltzmann machines by Hinton and Terry Sejnowski This paper talked about hidden units, learning multi-layer NNs more capable than linear classifiers.  He met Terry in 1985 and talked about backprop he was working on at the time. Terry told Hinton, and Hinton asked for him when Hinton was in a speaker in France.  Backprop was really invented in the context of Optimal Control in the 1960s (the Adjoint State method).  Back prop was popularised by Rumelhart Hinton Williams [Learning representations by back-propagating errors](http://www.cs.toronto.edu/~hinton/absps/naturebp.pdf)
+
+In AT&T, Yann invented LeNet.  He started working on shared weight (convolutional) NNs as a postdoc under Geoffrey Hinton. In Bell Labs he scaled up the network and had a Sun 4 all to himself (vs to a department at university).  He worked on the USPS training set (5000 examples) and got better results than anyone else using CNN methods.  There was convolution with strides, but no subsampling or pooling layers.  Each convolution was subsampling directly - they couldn't afford the computation to have convolution at every location. The 2nd iteration had convolution, pooling layers and subsampling and was called LeNet1.
+
+LeNet1 allowed for thing like cheque reading machines from AT&T subsidiary NCR (National Cash Register). In 1996, AT&T split into AT&T, NCR, and Lucent. The patent went to NCR but the engineering teams were in Lucent, so not much further progress could be made (the patent expried in 2007).
+
+The LeNet paper was partially about the neural network, and partially about automata machinery. Few have read the 2nd part about sequence level discriminatory learning and structure prediction without normalisation. This is similar to what we know as CRF (Conditional Random Field) today. 
+
+[Difference between pooling and subsampling](https://stats.stackexchange.com/q/354944/162527)
+
+As department head, Yann started DejaVu which was to compress scanned documents for the newly booming internet. 
+
+Dark period between 1995 and 2002 when not many people were working on Conv Nets. 
+
+ImageNet 2012 Alex talked about Convnets like everyone should know what they are.... and now they do.
+
+Yann's view on corporate research: 
+
+Was given authority to setup FAIR (Facebook AI Research) as Yann wanted.  He ensured:
+
+* Research needs to be open
+* Researchers need to be encouraged or even mandated to publish and evaluated like academic publishing
+
+### Advice for people wanting to break into AI
+
+Make yourself useful. 
+* Make a contribution to an open source project
+* Make an implementation of an algorithm whose code doesn't exist online
