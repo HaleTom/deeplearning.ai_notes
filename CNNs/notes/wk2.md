@@ -112,6 +112,7 @@ Adding skip connections / residual blocks has the performance be more like the e
 
 With ResNets, the training error can still decrease with over 1,000 layers (but these are not used in practice yet) without appreciable loss of performance.
 
+
 ### Why do ResNets work so well?
 
 Why do ResNets allow for deeper networks, solving the vanishing / exploding gradient problem?
@@ -136,6 +137,7 @@ Should the dimensions be different, a matrix $W_s$ above can be multiplied to ma
 
 Above, the solid arrows show activations with the same dimension. Dotted arrows use $W_s$ matrices because of the pool-like layers.
 
+
 ## Network in Network and 1x1 convolutions
 
 [2013 Lin Network In Network](https://arxiv.org/pdf/1312.4400)
@@ -155,6 +157,7 @@ Using 1x1 convolutions allows shrinking (or growing) the number of channels, the
 Even keeping the number of channels the same, a 1x1 convolution will add a non-linearity, allowing the network to learn more complex functions. 
 
 ![1x1-conv-channel-scaling](wk2-1x1-conv-channel-scaling.png)
+
 
 ## Inception Network Motivation
 
@@ -204,6 +207,7 @@ There are side branches which take a hidden layer and use that to make a predict
 The side branches help ensure that the features of the hidden layers are useful in predicting the final classification. They also appear to have a regularising effect, preventing overfitting. 
 
 There are multiple versions, (up to v4), and a version combined with ResNet skip connections which sometimes works even better.
+
 
 # Practical advice for implementing ConvNets
 
