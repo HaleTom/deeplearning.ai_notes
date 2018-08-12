@@ -154,5 +154,36 @@ In these cases, implement a default tie-breaker.  However, if there are sufficie
 
 K-means algorithm can be used to group the bounding box shapes from the multiple different output classes.  5 or more anchor box shapes may be used.
 
-## YOLO algorithm
+## YOLO algorithm wrap-up
 
+Generating output labels (both training and predictions):
+
+![wk3-generate-YOLO-training](wk3-generate-YOLO-training.png)
+
+The dimension 8 is 5 ($ P_C, b_x, b_y, b_h, b_w$) plus the 3 classes being detected.
+
+A more realistic output volume would be 19 x 19 x 40 (5 anchor boxes x 8)
+
+Assuming anchor box 2 is a wide shape (purple pen above), then the car will have the higher IoU with this anchor box.
+
+Get all anchored bounding boxes from all cells and run the non-max suppression algorithm.
+
+## Region proposals
+
+[2013-11-11 Rich feature hierarchies for accurate object detection and semantic segmentation](https://arxiv.org/abs/1311.2524) | Ross Girshick, Jeff Donahue, Trevor Darrell, Jitendra Malik
+
+Andrew uses the region proposal algorithms a bit less often than YOLO.
+
+R-CNN means Regions with Convolutional Neural Networks.
+
+This tries to pick only interesting regions to run the ConvNet classifier on.
+
+![wk3-segmentation-algorithm](wk3-segmentation-algorithm.png)
+
+A segmentation algorithm figures out what could be objects. Generally about 2000 blobs are returned as bounding boxes upon which to run classification. This would require about the same number of predictions as a 19 x 19 x 5 (anchor boxes) = 1805 YOLO arrangement.
+
+* R-CNN doesn't just trust the bounding box it was given by the segmentation algorithm, it detects a more accurate one.  One downside to R-CNN is that it is quite slow.
+* Fast R-CNN (Girshick 2015) uses a convolutional implementation of sliding windows to classify all the proposed regions.  The clusting step to propose the regions is still quite slow.
+* Faster R-CNN (Ren et al, 2016) uses a CNN to propose regions
+
+Ng says that Faster R-CNN implementations are still quite a bit slower than YOLO.
