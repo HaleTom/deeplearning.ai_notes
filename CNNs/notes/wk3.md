@@ -187,3 +187,10 @@ A segmentation algorithm figures out what could be objects. Generally about 2000
 * Faster R-CNN (Ren et al, 2016) uses a CNN to propose regions
 
 Ng says that Faster R-CNN implementations are still quite a bit slower than YOLO.
+
+He believes that not needing 2 steps for region proposal then classifiying seems like a more promising direction in the long term.
+
+
+## YOLO assignment learnings
+
+* Anchor boxes are defined by a height and width only.
