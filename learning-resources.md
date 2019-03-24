@@ -1,6 +1,13 @@
 # Resources I have used in my learning
 
-## Adversarial 
+Notes on deeplearning.ai courses
+
+* [mbadry1's notes](https://github.com/mbadry1/DeepLearning.ai-Summary)
+* [Hand drawn pritty slides](https://www.slideshare.net/TessFerrandez/notes-from-coursera-deep-learning-courses-by-andrew-ng)
+* [yiqiaoyin's $LaTeX$ notes](https://yiqiaoyin.files.wordpress.com/2018/02/deep-learning-notes.pdf)
+* [ppant's notes](https://github.com/ppant/deeplearning.ai-notes/blob/master/Natural%20Language%20Processing-Building%20Sequence%20Models.pdfj)
+
+## Adversarial
 
 [Awesome Adversarial Machine Learning (Links on GitHub)](https://github.com/yenchenlin/awesome-adversarial-machine-learning)
 
