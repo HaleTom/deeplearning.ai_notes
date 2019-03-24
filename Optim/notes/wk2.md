@@ -58,8 +58,8 @@ On *mini-batch* gradient descent, the cost will oscillate but the overall trend 
 ### Choosing mini-batch size
 Guidelines for choosing mini-batch size:
 
-* For small training set ($m < 2000$)- use batch gradient descetn
-* Over 2000 training examples, use 64, 128, 256 or 512 examples per batch for memory alignment. 1024 is less common. 
+* For small training set ($m < 2000$)- use batch gradient descent
+* Over 2000 training examples, use 64, 128, 256 or 512 examples per batch for memory alignment. 1024 is less common.
 * Ensure that the entire mini-batch fits in CPU/GPU memory
 
 Try a few different values for the batch size to find out which makes the training fastest.

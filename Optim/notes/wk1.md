@@ -185,7 +185,7 @@ Implementation tip: When plotting $J$, you should see it decrease monotonically 
 
 ## Dropout Regularisation
 
-Nodes are randomly dropped with certain keep probablility. All incoming and outgoing links from the dropped nodes are removed, in effect training a much smaller network, which can only represent a more simple function. 
+Nodes are randomly dropped with certain keep probablility. All incoming and outgoing links from the dropped nodes are removed, in effect training a much smaller network, which can only represent a more simple function.
 
 ### Inverted dropout
 
@@ -213,6 +213,9 @@ In theory, neurons could be dropped and the result averaged, but this is more co
 * Builds resilliance - A neuron can't rely on any one feature so weights must be more distributed, thereby shrinking the weights and reducing overfitting.
 
 L2 regularisation is more adaptive to the scale of different inputs.
+
+> In  a  standard  neural  network,  the  derivative  received  by  each  parameter tells  it  how  it  should  change  so  the  final  loss  function  is  reduced,  given what all other units are doing.  Therefore, units may change in a way that they fix up the mistakes of the other units.  This may lead to complex co-adaptations.  This in turn leads to overfitting because these co-adaptations do not generalize to unseen data.We hypothesize that for each hidden unit, dropout prevents co-adaptation by making the presence of other hidden units unreliable.Therefore, a hidden unit cannot rely on other specific units to correct its mistakes.  It must perform well in a wide variety of different contexts provided by the other hidden units.”
+(Srivastava et al., 2014)
 
 ### Keep probability by layer
 
