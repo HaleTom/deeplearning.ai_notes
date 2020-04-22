@@ -89,11 +89,11 @@ $f=0$ (or any other constant) would suffice the equations above (red). To ensure
 
 The loss will never be negative because of the $\rm{max}$ with 0:
 
-$$\rm{max}\left(\|d(\rm{A,N})\|_2^2 + \|d(\rm{A,P})\|_2^2 + \alpha, 0\right)$$
+$$\rm{max}\left(\|d(\rm{A,N})\|_2^2 - \|d(\rm{A,P})\|_2^2 + \alpha, 0\right)$$
 
-However if the 1st parameter is greater than 0, it will be the loss.
+The "best" parameters will cause the triplet loss to be quite negative, the worst will be $max(\alpha, 0) = 0$.
 
-To have an Anchor and Positive, the training set requires multiple pictures of some people.
+To have some Anchor and Positive pairings to learn from, the training set requires $\ge2$ pictures of some people.
 
 ![wk4-choosing-triplets](wk4-choosing-triplets.png)
 
