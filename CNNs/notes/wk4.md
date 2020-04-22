@@ -113,7 +113,9 @@ Using a Siamese network, get the output vector for two images, and then feed tho
 
 ![wk4-learning-similarity-function](wk4-learning-similarity-function.png)
 
-Each $w_k$ in the (example above each 128-element vector) $w$ and also $b$ are the parameters to be learned.
+Each $w_k$ (example above: weight applied to each element-wise absolute difference (128-element vector)) and $b$ are the parameters to be learned.
+
+The parameters of the blue cubes are Siamese, because they are shared.
 
 The second formula (green pen) is called the $\chi^2$ or "Chi squared similarity". This and other variations are described in the DeepFace paper (link above).
 
