@@ -17,7 +17,9 @@ Recognition ($1:K$ problem)
 
 Recognition is harder. Assume a 1% error in verification, so 1 in 100 will be in error (not too bad). But with $K=100$, applying the same system there will now be 100x the chance of making a mistake. So instead of 99% accuracy, 99.9% or higher may be needed for good accuracy with 100 people.
 
-We start with face verification, and then can use the same system for recognition if the accuracy is high enough.
+Start with face verification, and then use the same system for recognition if the accuracy is high enough.
+
+Below, we describe Recognition, and then tackle Verification.
 
 ## One shot learning
 
