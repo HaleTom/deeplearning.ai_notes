@@ -183,6 +183,10 @@ Picking the right hidden layer is important. If the layer value $l$ is too small
 
 The layer chosen is unrolled into a vector, and the square of the $L^2$ norm of the differences is used.
 
+From the assignment:
+
+    J_content = 1/(4 * m * n_H * n_W * n_C) * tf.reduce_sum(tf.squared_difference(a_C, a_G))
+
 ### Style cost function
 
 #### Meaning of style
