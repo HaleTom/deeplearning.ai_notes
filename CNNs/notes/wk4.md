@@ -237,7 +237,7 @@ Example of 3D data: CT scan (many 2D slices) or a movie.
 
 ![wk4-3D-convolutions](wk4-3D-convolutions.png)
 
-QUIZ:
+## QUIZ:
 https://www.coursera.org/learn/convolutional-neural-networks/exam/HxEwv/special-applications-face-recognition-neural-style-transfer
 
 ```
@@ -252,6 +252,11 @@ https://www.coursera.org/learn/convolutional-neural-networks/exam/HxEwv/special-
 9 Pixel values generated
 10 30x30x30x32
 ```
+
+## Assignment questions
+Why is `perm` parameter needed for Gram matrix for style but not content?
+
+Why for NST costs, why is the term $1 \over 4$ used instead of $1 \over 2$?
 
 https://www.coursera.org/learn/convolutional-neural-networks/notebook/lEthw/art-generation-with-neural-style-transfer
 
