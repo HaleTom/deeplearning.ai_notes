@@ -93,7 +93,7 @@ The loss will never be negative because of the $\rm{max}$ with 0:
 
 $$\rm{max}\left(\|d(\rm{A,N})\|_2^2 - \|d(\rm{A,P})\|_2^2 + \alpha, 0\right)$$
 
-The "best" parameters will cause the triplet loss to be quite negative, the worst will be $max(\alpha, 0) = 0$.
+The "best" parameters will cause the triplet loss to be quite negative, (but clamped at $0$), the worst will have a loss $\gt 0$.
 
 To have some Anchor and Positive pairings to learn from, the training set requires $\ge2$ pictures of some people.
 
