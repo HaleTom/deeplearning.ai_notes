@@ -167,7 +167,7 @@ Where:
 * $J_\rm{content}(G,C)$ measures how different the content of $G$ is to $C$.
 * $J_\rm{style}(G,S)$ measures how different the style of $G$ is to $S$.
 
-Andrew says that using two hyperparameters ($\alpha$ & $\beta$) is unnecessary where one is sufficient, but that's the way it was written.
+Andrew says that using two hyperparameters ($\alpha$ & $\beta$) is unnecessary as a single one can be inversed, but that's the way it was written.
 
 By minimising the cost function $J(G)$ by gradient descent, we can generate better images.
 
@@ -199,6 +199,8 @@ The if the correlation of channels is similar for two images, then those two ima
 
 ![wk4-style-gram-matrix](wk4-style-gram-matrix.png)
 
+Errata: The 2nd formula, should have a $'$ at the end: $ijk'$, like the one above.
+
 Matrix $G^{[l]}$ is $n_c^{[l]} \times n_c^{[l]}$ and gives the correlation between two channels $k$ and $k'$.
 
 If many of the $a^{i,j}$ activation values in channels $k$ and $k'$ are both large, then the double sum (or correlation value) of multiplied elements will also be large. If one channel is large and the other small, then the correlation won't be as large.
@@ -212,6 +214,8 @@ The matrix is symmetrical as the correlation between a and b is the same as betw
 The letter $G$ is used because of the term gram matrix in linear algebra.
 
 ![wk4-overall-style-cost-function](wk4-overall-style-cost-function.png)
+
+Errata: In the first formula, the differences of Gram matrices should be squared (matching the cost scaling term)
 
 A normalisation term is added, but not really required as the style cost is multiplied by a hyperparameter $\beta$.
 
@@ -232,16 +236,18 @@ Example of 3D data: CT scan (many 2D slices) or a movie.
 QUIZ:
 https://www.coursera.org/learn/convolutional-neural-networks/exam/HxEwv/special-applications-face-recognition-neural-style-transfer
 
+```
 1 T
-2 CD
+2 Just single image, One shot
 3 F
-$ D
+4 Plus alpha, negative negative
 5 T
-6T
-7 T
+6 T
+7 F  Not training network, but rather backprop to change pixels
 8 T
-9 B
-10 C
+9 Pixel values generated
+10 30x30x30x32
+```
 
 https://www.coursera.org/learn/convolutional-neural-networks/notebook/lEthw/art-generation-with-neural-style-transfer
 
