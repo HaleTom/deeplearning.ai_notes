@@ -8,8 +8,108 @@
 
 [Sepp Hochreiter, Jürgen Schmidhuber 1997: Long Short-term Memory](https://www.researchgate.net/publication/13853244_Long_Short-term_Memory) 4/5 and longish. Goes into depth on theory of vanishing gradients.
 
-### RNNs
-[Karpathy's "The Unreasonable Effectiveness of Recurrent Neural Networks"](http://karpathy.github.io/2015/05/21/rnn-effectiveness/)
+### Notation
+
+$Tx^{(i)}$ = length of $i$-th sequence example from dataset $x$
+
+$x^{(i)<t>}$ = the $t$-th element of temporal or sequenced data from the $i$-th example in the dataset $x$
+
+Vocabulary is also called a dictionary - a mapping of words to one-hot encodings.
+
+100,000 word dictionaries are not uncommon, even 1M words.
+
+### RNN model
+
+![wk1-why-not-standard-network](wk1-why-not-standard-network.png)
+
+If each input was was a one-hot encoding of length 100,000, the input layer would be enormous.
+
+We want information about one part of the input to be available to be useful in the context of another part of the input, like a kernel in CNNS.
+
+![wk1-RNNs.png](wk1-RNNs.png)
+
+$W_{ya}$ means it produces a $y$-like value, and is multiplied by an $a$-like value.
+
+Vector of 0s for the Time 0 activation is the most common choice.
+
+On the right, the shaded box denotes a time delay of one step.
+
+Classic RNNs only get information from earlier in the sequence.
+
+![wk1-fwd-prop.png](wk1-fwd-prop.png)
+
+The activation function for outputting $y$ is often a sigmoid or softmax, and for $a$ often tanh or ReLU.
+
+![wk1-simplified-rnn-notation.png](wk1-simplified-rnn-notation.png)
+
+Two parameter matrices can be joined into a single one, using the addition of the dot product to add the two terms explicitly added previously.
+
+Here the notation changes such that $W_y$ outputs a $y$-like quantity.
+
+### Backward propagation through time
+
+![wk1-fwd-and-back-prop.png](wk1-fwd-and-back-prop.png)
+
+Green = weights, Red = backprop, Blue = forwards.
+
+Element-wise loss: logistic regression loss a.k.a cross entropy loss.
+
+#### Different Types of RNNs
+
+This section was inspired by [Karpathy's "The Unreasonable Effectiveness of Recurrent Neural Networks"](http://karpathy.github.io/2015/05/21/rnn-effectiveness/).
+
+Types of architectures:
+* One-to-one:  Standard neural network, one input vector creates one output vector
+* Many-to-one:  Example: movie classification (number out of 5)
+* One-to-many:  Example: music generation given a seed vector
+* N-to-N: Example: Is this word a name?
+* Many-to-many:  Translation from one language to another
+* Attention-based (week 3)
+
+![wk1-example-architectures.png](wk1-example-architectures.png)
+
+
+#### Language model and sequence generation
+
+A language model gives P(sentence) = probability that a sequence of words would occur based on what it has learned.
+
+Less common words not in dictionary are replaced with a token symbolising <unknown>.
+
+Tokens can also be created for punctuation, or <end of text>.
+
+![wk1-predicting-probabilities.png](wk1-predicting-probabilities.png)
+
+Initial inputs are both $\vec 0$.
+
+$\hat y^{<1>}$ is the softmax probability of the first word being any of the possible first words.
+
+$\hat y^{<2>}$ is the softmax probability of the second word given that the first actually occurred.
+
+Individual timestep loss function is the softmax loss function (zero loss when $\hat y = 1$, almost infinite when $=0$)
+
+Overall loss is the sum of all timestep losses.
+
+The proabability of a sentence of 3 words is given by the multiplication of probabilities in the bottom right.
+
+
+
+![]()
+
+
+#### Quiz
+
+```
+1 (i)<j>
+2 x=y
+3 Sentiment, gender
+4 P(t|t-1)
+5 randomly sample, selected word
+6 Exploding
+7 100
+8 Alice, 0 -> No. For the signal to backpropagate without vanishing, we need c^{<t>} to be dependent on c^{<t-1>}
+9 G & 1-G
+10 Unidirectional, 1..t-1
+```
 
 ### GRUs
 
