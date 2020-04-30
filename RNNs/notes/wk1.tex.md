@@ -91,27 +91,41 @@ Overall loss is the sum of all timestep losses.
 
 The proabability of a sentence of 3 words is given by the multiplication of probabilities in the bottom right.
 
+#### Sampling novel sequences
 
+![wk1-sampling-language-model.png](wk1-sampling-language-model.png)
 
-![]()
+Use `np.random.choice()` to sample from the dictionary based on the probabilities of $\hat y$ at that timestep.
 
+Feed the word that was used as input in the next step.
 
-#### Quiz
+If getting an <unknown> token, then sample again.  Iterate until you get a <end of sentence> token.
 
-```
-1 (i)<j>
-2 x=y
-3 Sentiment, gender
-4 P(t|t-1)
-5 randomly sample, selected word
-6 Exploding
-7 100
-8 Alice, 0 -> No. For the signal to backpropagate without vanishing, we need c^{<t>} to be dependent on c^{<t-1>}
-9 G & 1-G
-10 Unidirectional, 1..t-1
-```
+Character-level language models never generate a unknown word token, and can generate even very uncommon words as their characters have some non-0 probability of occuring.
 
-### GRUs
+The disadvantage is that sequence is much longer, and long range dependencies can be lost (how later part of sentence is influenced by beginning of sentence).  Also more expensive to train. 
+
+#### Vanishing / exploding gradients with RNNs
+
+![wk1-vanishing-exploding-grads.png](wk1-vanishing-exploding-grads.png)
+
+Purple shows the locality effect caused by vanishing gradients.
+
+The basic RNN presented so far isn't good at capturing long-term dependencies such as plurality of pronouns.
+
+Vanishing gradient problems occur as the "depth" of the network is large, the number of "layers" is many, because sequences can be very long.  Gradients can increase or decrease exponentially.
+
+The error in the gradient at the end may become minuscule or unrepresentable or effected by representation issues by the time it propagates back to time step 0.
+
+RNNs output is mostly determined by the last few timesteps.
+
+Vanishing gradients tend to be a bigger problem sith training RNNs, but exploding gradient issues are catastrophic, causing parameters to go to NaN.
+
+Gradient clipping sets the maximum that a gradient can be, to avoid exploding gradients.
+
+### Simplified GRU
+
+GRUs modify the hidden layer of RNNs to enable them to better capture long-term dependencies.
 
 [On the Properties of Neural Machine Translation: Encoder-Decoder Approaches](https://arxiv.org/abs/1409.1259) - 1/5 difficulty
 
@@ -119,13 +133,31 @@ The proabability of a sentence of 3 words is given by the multiplication of prob
 
 The functions from Andrew Ng are given along with their names from the [Pytorch `nn.GRU` class documentation](https://pytorch.org/docs/master/nn.html#torch.nn.GRU)
 
-$\tilde{c}_t = \tanh(W_c [G_r \odot c_{t-1}, x_t ] + b_c) $   (torch $n_t$, candidate or new value of memory)
+$c$ is the memory cell.
 
-$ G_u = \sigma(W_u [ c_{t-1}, x_t ] + b_u) $  (torch $z_t$)
+$\tilde c^{<t>} =$ candidate for overwriting $c^{<t>}$.
 
-$ G_r = \sigma(W_r [ c_{t-1}, x_t ] + b_r) $  (torch $r_t$, relevance of old memory)
+GRU will output $a^{<t>} = c^{<t>}$.  (LSTMs output a different value)
 
-$ c_t = G_u \odot \tilde{c}_t + (1 - G_u) \odot c_{t-1} $  (torch $h_t$, cell memory or hidden state)
+![wk1-GRU-simplified.png](wk1-GRU-simplified.png)
+
+Assume the memory cell is a vector of 100 dimensions. Then all the red boxes will be of the same dimensions.
+
+The green boxes show what happens when $G_u$ is either 0 or 1 for a particular element. If $G_u$ is 0, then we get $c^{<t>} = c^{<t-1>}$.  This relates to the green in the sentence "cat...was" (singular).
+
+$\Gamma_u$ or $G_u$ is the update gate, with a value $[0..1]$.  It's calculated via a sigmoid, and for most of the domain, the values are either very close to either $0$ or $1$.  For intuition, think of it being either 0 or 1.
+
+### Full GRU
+
+$\Gamma_r$ is added - it determines the relevance of $c^{<t-1>}$ for computing $\tilde c$.  It determines how heavily the candidate hidden memory cell will be based upon the new input.
+
+$\tilde{c}_t = \tanh(W_c [G_r \odot c_{t-1}, x_t ] + b_c) \qquad $   (torch $n_t$, candidate or new value of memory)
+
+$ G_u = \sigma(W_u [ c_{t-1}, x_t ] + b_u) \qquad $  (torch $z_t$)
+
+$ G_r = \sigma(W_r [ c_{t-1}, x_t ] + b_r) \qquad $  (torch $r_t$, relevance of old memory)
+
+$ c_t = G_u \odot \tilde{c}_t + (1 - G_u) \odot c_{t-1} \qquad $  (torch $h_t$, cell memory or hidden state)
 
 $ a_t = c_t $
 
@@ -135,18 +167,25 @@ For ease of understanding, consider the update gate term $\Gamma_u$ to be either
 
 Because $\Gamma_u$ comes from a sigmoid, it will often be very close to $0$.  If it is indeed $0$, there will be no update coming from candidate memory $\tilde c$, so the remembered value $c$ will just propagate to the next time step.  This propagation without change addresses the vanishing gradient problem.
 
-$\Gamma_r$ determines the relevance of $c^{<t-1>}$ for computing $\tilde c$.  It determines how heavily the candidate hidden memory cell will be based upon the new input.
-
 
 ### LSTMs
+
+The LSTM is a more powerful and general version of a GRU.
+
+Seminal paper:
+[Sepp Hochreiter, Jürgen Schmidhuber 1997: Long Short-term Memory](https://www.researchgate.net/publication/13853244_Long_Short-term_Memory) 4/5 and longish. Goes into depth on theory of vanishing gradients.
 
 [colah's "Understanding LSTMs"](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
 
 Historically, LSTMs came much earlier than GRUs.  Some applications get better accuracy with GRUs, some with LSTMs.  Andrew prefers the GRU as it is simpler, computationally faster and scales to building bigger models.
 
-[Data Science: When to use GRU over LSTM?](https://datascience.stackexchange.com/questions/14581/when-to-use-gru-over-lstm)
+LSTM differences:
 
-Outputs both $a$ and $c$.
+* $\tilde c$ calculation drops $\Gamma_r$. $\Gamma_r$ can be used in the $\tilde c$ formula like in GRUs, but this is not as common. 
+* $\tilde c$ calculation is based on $a^{<t-1>}$ as now $a \ne c$
+* Forget gate is added to replace the $(1-G_u)$ term
+* Output gate $G_o$ is added
+* Outputs both $a$ and $c$.
 
 $ \tilde{c}_t = \tanh(W_c [ a_{t-1}, x_t ] + b_c)$
 
@@ -158,21 +197,65 @@ $ G_o = \sigma(W_o [ a_{t-1}, x_t ] + b_o) $
 
 $ c_t = G_u * \tilde{c}_t + G_f * c_{t-1} $
 
-$ a_t = G_o * c_t $
+$ a_t = G_o * tanh \ c_t $
 
-
-Uses a forget gate instead of $1 - \Gamma_u$.
+[Data Science: When to use GRU over LSTM?](https://datascience.stackexchange.com/questions/14581/when-to-use-gru-over-lstm)
 
 Adds $\Gamma_o$ for the output gate.  $a^{<t>} = \Gamma_o \odot tanh\left(\tilde c^{<t>}\right)$
 
-Drops $\Gamma_r$. $\Gamma_r$ can be used in the $\tilde c$ formula like in GRUs, but this is not as common. 
+Andrew Ng's picture of a LSTM cell is based on Chris Olah's [Understanding LSTMs](http://colah.github.io/posts/2015-08-Understanding-LSTMs/).
 
-Andrew Ng's picture of a LSTM cell comes from Chris Olah's [Understanding LSTMs](http://colah.github.io/posts/2015-08-Understanding-LSTMs/).
+Sometimes $c^{<t-1>}$ is also fed into the formula for update/forget/output gates, and the $W$ matrix expanded to match.  This is called a "peephole connection".
 
-Sometimes the $W_o$ matrix for $\Gamma_o$ also includes weights for $c^{<t-1>}$. This is called a "peephole connection". Additionally, $W_r$ and $W_f$ can also have these weights too.
+LSTMs came first in history, then GRUs came later, perhaps as a simplification of the LSTM.
+
+Some types of problem favour a GRU over a LSTM, and vice versa.
+
+Andrew feels that the simplicity and computational savings of the GRU is better when scaling out to building bigger networks.  But then he says that LSTM is more powerful and flexible.
+
+### Bidirectional RNNs
+
+Sometimes context requires later sequenced information.
+
+![wk1-BRNN.png](wk1-BRNN.png)
+
+Above shows direction of forward propagation for output of $\hat y^{<3>}$.  (Formula at top).
+
+Bidirectional RNNs using LSTM blocks are quite common.
+
+The disadvantage is that the entire sequence of data is required before any predictions can be made.
 
 ### Deep RNNs
 
+![wk1-deep-RNN.png](wk1-deep-RNN.png)
+
+Notation:  $a^{[l]<t>}$ is the activation of the $l$-th layer at time $t$.
+
+Each layer has it's own weights, shared over time.
+
 There can be multiple layers of neurons either in creating the activation $a$ which is passed forward in time, or in outputting $y$ given $a$.
+
+Having 3 layers in a deep RNN "is already quite a lot", because each layer also includes a temporal dimension.
+
+Sometimes there is a conventional Deep Neural Network which takes the output from the RNN layers for further transformation.
+
+The blocks can be RNN, LSTM, GRU or BRNN.
+
+
+### Quiz
+
+```
+1 (i)<j>
+2 x=y
+3 Sentiment, gender
+4 P(t|t-1)
+5 randomly sample, chosen word
+6 Exploding
+7 100
+8 Betty, 0
+9 G & 1-G
+10 Unidirectional, 1..t
+```
+
 
 # TODO add to papers list
