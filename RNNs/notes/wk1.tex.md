@@ -258,4 +258,7 @@ The blocks can be RNN, LSTM, GRU or BRNN.
 ```
 
 
-# TODO add to papers list
+### TODO
+
+* Add papers at top to papers list
+* Complete ungraded backprop section at end of Building_a_Recurrent_Neural_Network_Step_by_Step_v3a
