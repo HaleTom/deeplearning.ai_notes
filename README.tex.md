@@ -6,6 +6,10 @@ My notes from the [deeplearning.ai](https://www.deeplearning.ai/deep-learning-sp
 * Improving Deep Neural Networks
 * Structuring Machine Learning Projects
 * Convolutional Neural Networks
+* Sequence Models
+  * [Week 1](RNNs/notes/wk1.md)
+  * [Week 2](RNNs/notes/wk2.md)
+  * [Week 3](RNNs/notes/wk3.md)
 
 The notes for courses 1-4 are extensive and include pretty $\LaTeX$ formulae.
 
