@@ -2,7 +2,9 @@
 
 My notes from the [deeplearning.ai](https://www.deeplearning.ai/deep-learning-specialization/) courses.
 
-They all include pretty $\LaTeX$ formulae.  For viewing in Chrome, I recommend one of [these](https://chrome.google.com/webstore/detail/math-anywhere/gebhifiddmaaeecbaiemfpejghjdjmhc?hl=en) [two](https://chrome.google.com/webstore/detail/tex-all-the-things/cbimabofgmfdkicghcadidpemeenbffn/details) extensions.
+They all include pretty $\LaTeX$ formulae.
+
+(If you see two `$` above, and you're viewing in Chrome, I recommend one of [these](https://chrome.google.com/webstore/detail/math-anywhere/gebhifiddmaaeecbaiemfpejghjdjmhc?hl=en) [two](https://chrome.google.com/webstore/detail/tex-all-the-things/cbimabofgmfdkicghcadidpemeenbffn/details) extensions.)
 
 * 1. Neural Networks and Deep Learning
   * [Week 1](NNs-and-deep-learning/notes/wk1.md)
